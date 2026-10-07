@@ -1,0 +1,15 @@
+// EduPulse Production PostgreSQL Schema
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// See prisma/schema.prisma for model definitions.
+// To use PostgreSQL in production:
+// 1. In .env set DATABASE_URL="postgresql://user:password@localhost:5432/edupulse?schema=public"
+// 2. Change provider in schema.prisma to "postgresql"
+// 3. Run: npx prisma db push (or npx prisma migrate deploy)

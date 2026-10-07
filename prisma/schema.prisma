@@ -1,0 +1,702 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// ----------------------------------------------------
+// 1. AUTH & USER ROLES
+// ----------------------------------------------------
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  passwordHash  String
+  name          String
+  role          String    @default("STUDENT") // STUDENT, TEACHER, ADMIN
+  avatar        String?
+  bio           String?
+  schoolId      String?
+  school        School?   @relation(fields: [schoolId], references: [id])
+  xp            Int       @default(0)
+  level         Int       @default(1)
+  streak        Int       @default(0)
+  isVerified    Boolean   @default(false)
+  plan          String    @default("FREE") // FREE, PRO, SCHOOL, ENTERPRISE
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  profile            Profile?
+  quizzesCreated     Quiz[]              @relation("TeacherQuizzes")
+  classesOwned       Class[]             @relation("TeacherClasses")
+  classMemberships   ClassMember[]
+  coursesCreated     Course[]            @relation("TeacherCourses")
+  storiesCreated     Story[]             @relation("TeacherStories")
+  gameSessionsHosted GameSession[]       @relation("HostGameSessions")
+  gameParticipations GameParticipant[]
+  assignmentsCreated Assignment[]        @relation("TeacherAssignments")
+  assignmentAttempts AssignmentAttempt[]
+  studyGroups        StudyGroupMember[]
+  studySessions      StudySession[]
+  flashcardSets      FlashcardSet[]
+  folders            Folder[]
+  favorites          Favorite[]
+  mediaFiles         MediaFile[]
+  workspaceMembers   WorkspaceMember[]
+  groupMembers       GroupMember[]
+  notifications      Notification[]
+  badgesEarned       UserBadge[]
+  xpTransactions     XpTransaction[]
+  subscriptions      Subscription[]
+  marketplaceItems   MarketplaceItem[]   @relation("CreatorMarketplace")
+  purchases          Purchase[]
+  reviews            Review[]
+  moderationReports  ModerationReport[]  @relation("ReporterUser")
+  auditLogs          AuditLog[]
+}
+
+model Profile {
+  id               String   @id @default(cuid())
+  userId           String   @unique
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  phone            String?
+  city             String?
+  title            String?  // e.g. "Matematik Öğretmeni", "10. Sınıf Öğrencisi"
+  preferredSubject String?
+  themePreference  String   @default("system")
+  soundEnabled     Boolean  @default(true)
+  musicEnabled     Boolean  @default(true)
+  language         String   @default("tr") // tr, en
+  updatedAt        DateTime @updatedAt
+}
+
+model School {
+  id        String   @id @default(cuid())
+  name      String
+  city      String?
+  type      String?  // "Lise", "Ortaokul", "Üniversite"
+  code      String   @unique
+  createdAt DateTime @default(now())
+  users     User[]
+  classes   Class[]
+}
+
+// ----------------------------------------------------
+// 2. CLASSES & STUDY GROUPS
+// ----------------------------------------------------
+
+model Class {
+  id          String        @id @default(cuid())
+  name        String        // e.g. "10/A", "9/B"
+  gradeLevel  Int?          // 9, 10, 11, 12
+  code        String        @unique // Join PIN e.g. "CLS-9A24"
+  teacherId   String
+  teacher     User          @relation("TeacherClasses", fields: [teacherId], references: [id], onDelete: Cascade)
+  schoolId    String?
+  school      School?       @relation(fields: [schoolId], references: [id])
+  isArchived  Boolean       @default(false)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  members     ClassMember[]
+  assignments Assignment[]
+}
+
+model ClassMember {
+  id        String   @id @default(cuid())
+  classId   String
+  class     Class    @relation(fields: [classId], references: [id], onDelete: Cascade)
+  studentId String
+  student   User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  joinedAt  DateTime @default(now())
+
+  @@unique([classId, studentId])
+}
+
+// ----------------------------------------------------
+// 3. CURRICULUM, CATEGORIES & SUBJECTS
+// ----------------------------------------------------
+
+model Category {
+  id          String    @id @default(cuid())
+  name        String    @unique // e.g. "Fen Bilimleri", "Sosyal Bilimler", "Dil ve Edebiyat"
+  slug        String    @unique
+  icon        String?
+  subjects    Subject[]
+  quizzes     Quiz[]
+}
+
+model Subject {
+  id          String     @id @default(cuid())
+  name        String     @unique // e.g. "Türk Dili ve Edebiyatı", "Matematik", "Fizik"
+  slug        String     @unique
+  categoryId  String
+  category    Category   @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  quizzes     Quiz[]
+  objectives  LearningObjective[]
+}
+
+model LearningObjective {
+  id          String    @id @default(cuid())
+  code        String    @unique // e.g. "TDE.10.1.3"
+  description String
+  gradeLevel  Int
+  subjectId   String
+  subject     Subject   @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  questions   Question[]
+}
+
+// ----------------------------------------------------
+// 4. QUIZZES & QUESTIONS (SUPPORTING 20 TYPES)
+// ----------------------------------------------------
+
+model Quiz {
+  id          String     @id @default(cuid())
+  title       String
+  description String?
+  coverImage  String?
+  creatorId   String
+  creator     User       @relation("TeacherQuizzes", fields: [creatorId], references: [id], onDelete: Cascade)
+  categoryId  String?
+  category    Category?  @relation(fields: [categoryId], references: [id])
+  subjectId   String?
+  subject     Subject?   @relation(fields: [subjectId], references: [id])
+  gradeLevel  Int?       // e.g. 10
+  difficulty  String     @default("MEDIUM") // EASY, MEDIUM, HARD
+  visibility  String     @default("PUBLIC") // PUBLIC, UNLISTED, PRIVATE
+  isPremium   Boolean    @default(false)
+  theme       String     @default("modern-indigo")
+  playCount   Int        @default(0)
+  rating      Float      @default(5.0)
+  folderId    String?
+  folder      Folder?    @relation(fields: [folderId], references: [id])
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  questions       Question[]
+  gameSessions    GameSession[]
+  assignments     Assignment[]
+  courseModules   CourseModule[]
+  favorites       Favorite[]
+  marketplaceItem MarketplaceItem?
+  tags            QuizTag[]
+}
+
+model Question {
+  id                  String   @id @default(cuid())
+  quizId              String
+  quiz                Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  orderIndex          Int      @default(0)
+  
+  // Question Type: MULTIPLE_CHOICE, TRUE_FALSE, TYPE_ANSWER, PUZZLE, SLIDER, PIN_ANSWER,
+  // DROP_PIN, POLL, SCALE, NPS_SCALE, WORD_CLOUD, OPEN_ENDED, BRAINSTORM,
+  // IMAGE_QUESTION, AUDIO_QUESTION, VIDEO_QUESTION, MATCHING, ORDERING, SHORT_ANSWER, MULTIPLE_SELECT
+  type                String   @default("MULTIPLE_CHOICE")
+  
+  title               String   // Question prompt / content
+  explanation         String?  // Answer explanation for students
+  mediaUrl            String?  // Optional media (image, audio, video)
+  mediaType           String?  // IMAGE, AUDIO, VIDEO
+  timeLimit           Int      @default(20) // in seconds (e.g. 10, 20, 30, 60)
+  points              Int      @default(1000)
+  allowMultiple       Boolean  @default(false)
+  difficulty          String   @default("MEDIUM") // EASY, MEDIUM, HARD
+  
+  // Learning Objective link
+  objectiveId         String?
+  objective           LearningObjective? @relation(fields: [objectiveId], references: [id])
+  
+  // Additional config JSON for sliders, ranges, matching pairs, pins, etc.
+  configJson          String?  // JSON string for complex question settings
+
+  options             QuestionOption[]
+  gameAnswers         GameAnswer[]
+  assignmentAnswers   AssignmentAnswer[]
+
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}
+
+model QuestionOption {
+  id         String   @id @default(cuid())
+  questionId String
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  text       String
+  isCorrect  Boolean  @default(false)
+  orderIndex Int      @default(0)
+  color      String?  // Red, Blue, Yellow, Green, etc.
+  mediaUrl   String?
+  matchTarget String? // For matching question types
+}
+
+model Tag {
+  id      String    @id @default(cuid())
+  name    String    @unique
+  quizzes QuizTag[]
+}
+
+model QuizTag {
+  id      String @id @default(cuid())
+  quizId  String
+  quiz    Quiz   @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  tagId   String
+  tag     Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@unique([quizId, tagId])
+}
+
+// ----------------------------------------------------
+// 5. LIVE GAME SESSIONS & REALTIME MULTIPLAYER
+// ----------------------------------------------------
+
+model GameSession {
+  id            String   @id @default(cuid())
+  pin           String   @unique // 6-digit game PIN e.g. "829415"
+  quizId        String
+  quiz          Quiz     @relation(fields: [quizId], references: [id])
+  hostId        String
+  host          User     @relation("HostGameSessions", fields: [hostId], references: [id])
+  
+  // Mode: CLASSIC, TEAM_SHARED, TEAM_PERSONAL, ACCURACY, LECTURE, WORKSHOP
+  mode          String   @default("CLASSIC")
+  
+  // Status: LOBBY, QUESTION_ACTIVE, QUESTION_RESULT, LEADERBOARD, PODIUM, FINISHED
+  status        String   @default("LOBBY")
+  
+  currentQuestionIndex Int @default(0)
+  questionStartedAt   DateTime?
+  profanityFilter     Boolean @default(true)
+  randomNicknames     Boolean @default(false)
+  soundMuted          Boolean @default(false)
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  participants  GameParticipant[]
+  gameAnswers   GameAnswer[]
+}
+
+model GameParticipant {
+  id            String      @id @default(cuid())
+  sessionId     String
+  session       GameSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  userId        String?
+  user          User?       @relation(fields: [userId], references: [id])
+  nickname      String
+  avatar        String      @default("fox")
+  teamName      String?
+  score         Int         @default(0)
+  streak        Int         @default(0)
+  correctAnswers Int        @default(0)
+  totalAnswers  Int         @default(0)
+  rank          Int         @default(1)
+  isOnline      Boolean     @default(true)
+  joinedAt      DateTime    @default(now())
+
+  answers       GameAnswer[]
+
+  @@unique([sessionId, nickname])
+}
+
+model GameAnswer {
+  id            String          @id @default(cuid())
+  sessionId     String
+  session       GameSession     @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  participantId String
+  participant   GameParticipant @relation(fields: [participantId], references: [id], onDelete: Cascade)
+  questionId    String
+  question      Question        @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  
+  selectedOptionId String?
+  textAnswer       String?
+  isCorrect        Boolean      @default(false)
+  pointsEarned     Int          @default(0)
+  timeTakenMs      Int          @default(0)
+  answeredAt       DateTime     @default(now())
+}
+
+// ----------------------------------------------------
+// 6. SELF-PACED ASSIGNMENTS
+// ----------------------------------------------------
+
+model Assignment {
+  id          String   @id @default(cuid())
+  title       String
+  quizId      String
+  quiz        Quiz     @relation(fields: [quizId], references: [id])
+  teacherId   String
+  teacher     User     @relation("TeacherAssignments", fields: [teacherId], references: [id])
+  classId     String?
+  class       Class?   @relation(fields: [classId], references: [id])
+  code        String   @unique // Pin/code e.g. "HW-49102"
+  deadline    DateTime?
+  allowGuest  Boolean  @default(true)
+  shuffleQuestions Boolean @default(false)
+  status      String   @default("ACTIVE") // ACTIVE, COMPLETED, EXPIRED
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  attempts    AssignmentAttempt[]
+}
+
+model AssignmentAttempt {
+  id            String       @id @default(cuid())
+  assignmentId  String
+  assignment    Assignment   @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  studentId     String?
+  student       User?        @relation(fields: [studentId], references: [id])
+  studentName   String       // For registered or guest student
+  score         Int          @default(0)
+  totalQuestions Int         @default(0)
+  correctCount  Int          @default(0)
+  completedAt   DateTime?
+  durationSeconds Int        @default(0)
+  createdAt     DateTime     @default(now())
+
+  answers       AssignmentAnswer[]
+}
+
+model AssignmentAnswer {
+  id          String            @id @default(cuid())
+  attemptId   String
+  attempt     AssignmentAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  questionId  String
+  question    Question          @relation(fields: [questionId], references: [id])
+  selectedOptionId String?
+  textAnswer  String?
+  isCorrect   Boolean           @default(false)
+}
+
+// ----------------------------------------------------
+// 7. COURSES & MICROLEARNING STORIES
+// ----------------------------------------------------
+
+model Course {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  coverImage  String?
+  creatorId   String
+  creator     User     @relation("TeacherCourses", fields: [creatorId], references: [id])
+  isPremium   Boolean  @default(false)
+  price       Float    @default(0.0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  modules     CourseModule[]
+}
+
+model CourseModule {
+  id          String   @id @default(cuid())
+  courseId    String
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  title       String
+  orderIndex  Int      @default(0)
+  
+  // Module types: LESSON, QUIZ, VIDEO, PDF, FLASHCARDS
+  type        String   @default("LESSON")
+  content     String?  // Rich text or description
+  mediaUrl    String?  // Video or document URL
+  quizId      String?
+  quiz        Quiz?    @relation(fields: [quizId], references: [id])
+}
+
+model Story {
+  id          String   @id @default(cuid())
+  title       String
+  coverImage  String?
+  creatorId   String
+  creator     User     @relation("TeacherStories", fields: [creatorId], references: [id])
+  isPublished Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  blocks      StoryBlock[]
+}
+
+model StoryBlock {
+  id          String   @id @default(cuid())
+  storyId     String
+  story       Story    @relation(fields: [storyId], references: [id], onDelete: Cascade)
+  orderIndex  Int      @default(0)
+  
+  // Block types: TEXT, IMAGE, VIDEO, QUIZ, POLL, FLASHCARD
+  type        String   @default("TEXT")
+  title       String?
+  content     String?
+  mediaUrl    String?
+  questionJson String? // Embedded quiz or poll options
+}
+
+// ----------------------------------------------------
+// 8. FLASHCARDS, SOLO MODES & STUDY GROUPS
+// ----------------------------------------------------
+
+model FlashcardSet {
+  id          String   @id @default(cuid())
+  title       String
+  creatorId   String
+  creator     User     @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  
+  cards       Flashcard[]
+}
+
+model Flashcard {
+  id          String       @id @default(cuid())
+  setId       String
+  set         FlashcardSet @relation(fields: [setId], references: [id], onDelete: Cascade)
+  frontText   String
+  backText    String
+  mediaUrl    String?
+  mastered    Boolean      @default(false)
+}
+
+model StudySession {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  quizId      String
+  
+  // Mode: CLASSIC_SOLO, CHILL, TREASURE, TOWER, FLASHCARDS, LEARN, TEST
+  mode        String   @default("CLASSIC_SOLO")
+  score       Int      @default(0)
+  totalItems  Int      @default(0)
+  correctItems Int     @default(0)
+  xpEarned    Int      @default(0)
+  completedAt DateTime @default(now())
+}
+
+model StudyGroup {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  code        String   @unique
+  createdAt   DateTime @default(now())
+  
+  members     StudyGroupMember[]
+}
+
+model StudyGroupMember {
+  id        String     @id @default(cuid())
+  groupId   String
+  group     StudyGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role      String     @default("MEMBER") // ADMIN, MEMBER
+  joinedAt  DateTime   @default(now())
+
+  @@unique([groupId, userId])
+}
+
+// ----------------------------------------------------
+// 9. LIBRARY, FOLDERS & MEDIA
+// ----------------------------------------------------
+
+model Folder {
+  id          String   @id @default(cuid())
+  name        String
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  
+  quizzes     Quiz[]
+}
+
+model Favorite {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  quizId      String
+  quiz        Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+
+  @@unique([userId, quizId])
+}
+
+model MediaFile {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  filename    String
+  url         String
+  sizeBytes   Int      @default(0)
+  mimeType    String
+  category    String   @default("IMAGE") // IMAGE, VIDEO, AUDIO, PDF, SLIDES
+  createdAt   DateTime @default(now())
+}
+
+// ----------------------------------------------------
+// 10. WORKSPACES & COLLABORATION
+// ----------------------------------------------------
+
+model Workspace {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+  
+  members     WorkspaceMember[]
+}
+
+model WorkspaceMember {
+  id          String    @id @default(cuid())
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role        String    @default("EDITOR") // OWNER, ADMIN, EDITOR, VIEWER
+
+  @@unique([workspaceId, userId])
+}
+
+model Group {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+  
+  members     GroupMember[]
+}
+
+model GroupMember {
+  id       String   @id @default(cuid())
+  groupId  String
+  group    Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  userId   String
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  joinedAt DateTime @default(now())
+
+  @@unique([groupId, userId])
+}
+
+// ----------------------------------------------------
+// 11. GAMIFICATION: XP, BADGES, ACHIEVEMENTS
+// ----------------------------------------------------
+
+model Badge {
+  id          String   @id @default(cuid())
+  code        String   @unique // "FIRST_QUIZ", "STREAK_5", "PERFECT_SCORE", "SPEED_DEMON"
+  name        String
+  description String
+  icon        String
+  xpBonus     Int      @default(100)
+  
+  userBadges  UserBadge[]
+}
+
+model UserBadge {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  badgeId   String
+  badge     Badge    @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+  awardedAt DateTime @default(now())
+
+  @@unique([userId, badgeId])
+}
+
+model XpTransaction {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  amount    Int
+  reason    String   // "GAME_WIN", "DAILY_STREAK", "ASSIGNMENT_DONE", "QUIZ_CREATE"
+  createdAt DateTime @default(now())
+}
+
+// ----------------------------------------------------
+// 12. SUBSCRIPTIONS, PREMIUM & MARKETPLACE
+// ----------------------------------------------------
+
+model Subscription {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plan          String   // PRO, SCHOOL, ENTERPRISE
+  status        String   @default("ACTIVE") // ACTIVE, CANCELED, PAST_DUE
+  currentPeriodEnd DateTime
+  stripeCustomerId String?
+  stripeSubscriptionId String?
+  createdAt     DateTime @default(now())
+}
+
+model MarketplaceItem {
+  id          String   @id @default(cuid())
+  creatorId   String
+  creator     User     @relation("CreatorMarketplace", fields: [creatorId], references: [id])
+  quizId      String?  @unique
+  quiz        Quiz?    @relation(fields: [quizId], references: [id])
+  title       String
+  description String?
+  price       Float    @default(0.0) // 0 for free community pack
+  salesCount  Int      @default(0)
+  status      String   @default("APPROVED") // PENDING, APPROVED, REJECTED
+  createdAt   DateTime @default(now())
+
+  purchases   Purchase[]
+  reviews     Review[]
+}
+
+model Purchase {
+  id        String          @id @default(cuid())
+  userId    String
+  user      User            @relation(fields: [userId], references: [id])
+  itemId    String
+  item      MarketplaceItem @relation(fields: [itemId], references: [id])
+  amount    Float
+  createdAt DateTime        @default(now())
+}
+
+model Review {
+  id        String          @id @default(cuid())
+  userId    String
+  user      User            @relation(fields: [userId], references: [id])
+  itemId    String
+  item      MarketplaceItem @relation(fields: [itemId], references: [id])
+  rating    Int             @default(5)
+  comment   String?
+  createdAt DateTime        @default(now())
+}
+
+// ----------------------------------------------------
+// 13. MODERATION, AUDIT LOGS & NOTIFICATIONS
+// ----------------------------------------------------
+
+model ModerationReport {
+  id          String   @id @default(cuid())
+  reporterId  String
+  reporter    User     @relation("ReporterUser", fields: [reporterId], references: [id])
+  targetType  String   // QUIZ, COMMENT, USER
+  targetId    String
+  reason      String   // SPAM, COPYRIGHT, INAPPROPRIATE
+  details     String?
+  status      String   @default("PENDING") // PENDING, RESOLVED, DISMISSED
+  createdAt   DateTime @default(now())
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  action    String   // USER_LOGIN, QUIZ_CREATED, GAME_STARTED, PLAN_UPGRADE
+  details   String?
+  ipAddress String?
+  createdAt DateTime @default(now())
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  message   String
+  link      String?
+  isRead    Boolean  @default(false)
+  type      String   @default("INFO") // INFO, ASSIGNMENT, BADGE, GAME
+  createdAt DateTime @default(now())
+}
