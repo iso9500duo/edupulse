@@ -2,7 +2,10 @@
 const nextConfig = {
   reactStrictMode: false,
   experimental: {
-    serverComponentsExternalPackages: ['@prisma/client', 'bcryptjs']
+    serverComponentsExternalPackages: ['@prisma/client', 'bcryptjs'],
+    outputFileTracingIncludes: {
+      '/api/**': ['./prisma/dev.db', './prisma/**'],
+    },
   },
   images: {
     remotePatterns: [
