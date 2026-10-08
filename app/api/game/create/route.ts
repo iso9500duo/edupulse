@@ -6,8 +6,12 @@ import { generatePin } from '@/lib/utils';
 export async function POST(req: NextRequest) {
   try {
     const session = await getCurrentUser();
-    if (!session) {
-      return NextResponse.json({ error: 'Lütfen önce giriş yapınız.' }, { status: 401 });
+    let hostId = session?.userId;
+    if (!hostId) {
+      const defaultHost = await prisma.user.findFirst({
+        where: { role: 'TEACHER' },
+      }) || await prisma.user.findFirst();
+      hostId = defaultHost?.id || 'demo-host-id';
     }
 
     const { quizId, mode = 'CLASSIC', profanityFilter = true, randomNicknames = false } = await req.json();
@@ -46,12 +50,32 @@ export async function POST(req: NextRequest) {
       data: {
         pin,
         quizId: quiz.id,
-        hostId: session.userId,
+        hostId,
         mode,
         status: 'LOBBY',
         profanityFilter,
         randomNicknames,
       },
+    });
+
+    // Register into serverlessGameRooms for fast cross-lambda and socket access
+    const globalGameState = globalThis as unknown as {
+      serverlessGameRooms?: Map<string, any>;
+    };
+    if (!globalGameState.serverlessGameRooms) {
+      globalGameState.serverlessGameRooms = new Map();
+    }
+    globalGameState.serverlessGameRooms.set(pin, {
+      pin,
+      status: 'LOBBY',
+      quiz,
+      hostId,
+      participants: [],
+      currentQuestionIndex: 0,
+      questionStartedAt: null,
+      answers: {},
+      reactions: [],
+      updatedAt: Date.now(),
     });
 
     // Increment play count

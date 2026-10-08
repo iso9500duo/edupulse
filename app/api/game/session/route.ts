@@ -114,9 +114,20 @@ export async function POST(req: NextRequest) {
     }
 
     if (action === 'SUBMIT_ANSWER') {
-      const { nickname, selectedOptionId, isCorrect, timeTakenMs, basePoints } = data;
+      const { nickname, selectedOptionId, selectedOptionIndex, isCorrect: clientIsCorrect, timeTakenMs = 3000, basePoints = 1000 } = data;
       const participant = room.participants.find((p: any) => p.nickname === nickname);
       if (participant) {
+        // Validate answer against room quiz question options
+        let isCorrect = Boolean(clientIsCorrect);
+        const currentQ = room.quiz?.questions?.[room.currentQuestionIndex];
+        if (currentQ?.options && selectedOptionIndex !== undefined) {
+          const opt = currentQ.options[selectedOptionIndex];
+          if (opt) isCorrect = Boolean(opt.isCorrect);
+        } else if (currentQ?.options && selectedOptionId) {
+          const opt = currentQ.options.find((o: any) => o.id === selectedOptionId);
+          if (opt) isCorrect = Boolean(opt.isCorrect);
+        }
+
         let pointsEarned = 0;
         if (isCorrect) {
           participant.streak += 1;
@@ -130,8 +141,10 @@ export async function POST(req: NextRequest) {
 
         room.answers[nickname] = {
           selectedOptionId,
+          selectedOptionIndex,
           isCorrect,
           pointsEarned,
+          timeTakenMs,
         };
 
         // Recalculate ranks
@@ -140,9 +153,12 @@ export async function POST(req: NextRequest) {
           p.rank = idx + 1;
         });
 
+        room.updatedAt = Date.now();
+
         return NextResponse.json({
           success: true,
           pointsEarned,
+          isCorrect,
           currentScore: participant.score,
           streak: participant.streak,
           rank: participant.rank,
@@ -152,16 +168,19 @@ export async function POST(req: NextRequest) {
 
     if (action === 'SHOW_RESULTS') {
       room.status = 'QUESTION_RESULT';
+      room.updatedAt = Date.now();
       return NextResponse.json({ success: true, room });
     }
 
     if (action === 'SHOW_LEADERBOARD') {
       room.status = 'LEADERBOARD';
+      room.updatedAt = Date.now();
       return NextResponse.json({ success: true, room });
     }
 
     if (action === 'SHOW_PODIUM') {
       room.status = 'PODIUM';
+      room.updatedAt = Date.now();
       return NextResponse.json({ success: true, room });
     }
 

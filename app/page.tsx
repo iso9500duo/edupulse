@@ -48,7 +48,7 @@ export default function HomePage() {
     e.preventDefault();
     if (!pinInput.trim()) return;
     playClick();
-    router.push(`/live/play/${pinInput.trim()}`);
+    router.push(`/join?pin=${encodeURIComponent(pinInput.trim())}`);
   };
 
   const handleQuickAiGenerate = async () => {

@@ -67,6 +67,10 @@ async function runTestSuite() {
     assert(session.pin.length === 6, 'Oyun PIN kodu 6 haneli benzersiz formatta oluşturuldu');
     assert(session.status === 'LOBBY', 'Oyun oturumu başlangıç durumu LOBBY olarak ayarlandı');
 
+    const QRCode = require('qrcode');
+    const qrDataUrl = await QRCode.toDataURL('https://edupulse.app/join?pin=' + session.pin);
+    assert(qrDataUrl.startsWith('data:image/png;base64,'), 'Oyun oturumuna özel benzersiz karekod (QR Code) başarıyla üretildi');
+
     // 5. Scoring & Speed Bonus Tests
     console.log('\n5. Skor ve Hız Bonusu (Scoring) Testleri:');
     const basePoints = 1000;

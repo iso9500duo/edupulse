@@ -36,6 +36,7 @@ export default function PlayerGamePage() {
   const [joined, setJoined] = useState(false);
   const [nickname, setNickname] = useState(user?.name || '');
   const [selectedAvatar, setSelectedAvatar] = useState('🦊');
+  const [quizInfo, setQuizInfo] = useState<{ title: string; host: string } | null>(null);
 
   // Game States
   const [playerState, setPlayerState] = useState<'JOIN' | 'LOBBY' | 'QUESTION' | 'SUBMITTED' | 'RESULT' | 'PODIUM'>('JOIN');
@@ -48,21 +49,47 @@ export default function PlayerGamePage() {
   const [myRank, setMyRank] = useState(1);
 
   const questionStartTimeRef = useRef<number>(Date.now());
+  const pollIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const currentQIndexRef = useRef<number>(0);
+  const playerStateRef = useRef<string>('JOIN');
 
   useEffect(() => {
-    const s = io({ transports: ['websocket', 'polling'] });
+    playerStateRef.current = playerState;
+  }, [playerState]);
+
+  useEffect(() => {
+    // 1. Validate PIN & fetch quiz title
+    fetch(`/api/game/${pin}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.quizTitle) {
+          setQuizInfo({ title: data.quizTitle, host: data.hostName || 'Öğretmen' });
+        }
+      })
+      .catch((err) => console.error('Fetch game error:', err));
+
+    // 2. Initialize Socket.io (if available)
+    const s = io({
+      transports: ['websocket', 'polling'],
+      timeout: 3000,
+    });
 
     s.on('game_started', () => {
       setPlayerState('QUESTION');
       setHasAnswered(false);
       setSelectedOptIndex(null);
+      setCurrentQIndex(0);
+      currentQIndexRef.current = 0;
       questionStartTimeRef.current = Date.now();
     });
 
-    s.on('question_changed', () => {
+    s.on('question_changed', ({ questionIndex }) => {
       setPlayerState('QUESTION');
       setHasAnswered(false);
       setSelectedOptIndex(null);
+      const qIdx = questionIndex !== undefined ? questionIndex : currentQIndexRef.current + 1;
+      setCurrentQIndex(qIdx);
+      currentQIndexRef.current = qIdx;
       questionStartTimeRef.current = Date.now();
     });
 
@@ -88,54 +115,172 @@ export default function PlayerGamePage() {
 
     setSocket(s);
 
+    // 3. DUAL-TRANSPORT: Automatic REST polling sync for Serverless (Vercel) environments
+    pollIntervalRef.current = setInterval(async () => {
+      if (!pin) return;
+      try {
+        const res = await fetch(`/api/game/session?pin=${pin}`);
+        if (!res.ok) return;
+        const json = await res.json();
+        const room = json.room;
+        if (!room) return;
+
+        // Sync participant stats
+        if (nickname) {
+          const me = room.participants?.find((p: any) => p.nickname === nickname);
+          if (me) {
+            setMyScore(me.score);
+            setMyStreak(me.streak);
+            setMyRank(me.rank);
+          }
+        }
+
+        // Room state transitions
+        const state = playerStateRef.current;
+        if (state === 'LOBBY' && room.status === 'QUESTION_ACTIVE') {
+          setPlayerState('QUESTION');
+          setHasAnswered(false);
+          setSelectedOptIndex(null);
+          setCurrentQIndex(room.currentQuestionIndex || 0);
+          currentQIndexRef.current = room.currentQuestionIndex || 0;
+          questionStartTimeRef.current = Date.now();
+        } else if ((state === 'QUESTION' || state === 'SUBMITTED' || state === 'RESULT') && room.status === 'QUESTION_ACTIVE') {
+          if (room.currentQuestionIndex !== currentQIndexRef.current) {
+            setPlayerState('QUESTION');
+            setHasAnswered(false);
+            setSelectedOptIndex(null);
+            setCurrentQIndex(room.currentQuestionIndex);
+            currentQIndexRef.current = room.currentQuestionIndex;
+            questionStartTimeRef.current = Date.now();
+          }
+        } else if ((state === 'QUESTION' || state === 'SUBMITTED') && (room.status === 'QUESTION_RESULT' || room.status === 'RESULTS')) {
+          setPlayerState('RESULT');
+        } else if (state !== 'PODIUM' && room.status === 'PODIUM') {
+          setPlayerState('PODIUM');
+        }
+      } catch (e) {
+        // quiet polling error
+      }
+    }, 1200);
+
     return () => {
       s.disconnect();
+      if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
     };
-  }, [pin]);
+  }, [pin, nickname]);
 
-  const handleJoin = (e: React.FormEvent) => {
+  const handleJoin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!nickname.trim() || !socket) return;
+    if (!nickname.trim()) return;
     playClick();
 
-    socket.emit('join_game', {
-      pin,
-      role: 'player',
-      nickname: nickname.trim(),
-      avatar: selectedAvatar,
-      userId: user?.id,
-    });
+    const cleanNick = nickname.trim();
+
+    // 1. Socket emit if connected
+    if (socket && socket.connected) {
+      socket.emit('join_game', {
+        pin,
+        role: 'player',
+        nickname: cleanNick,
+        avatar: selectedAvatar,
+        userId: user?.id,
+      });
+    }
+
+    // 2. Serverless REST join
+    try {
+      await fetch('/api/game/session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'JOIN',
+          pin,
+          data: {
+            nickname: cleanNick,
+            avatar: selectedAvatar,
+            userId: user?.id,
+          },
+        }),
+      });
+    } catch (e) {
+      console.warn('REST join sync:', e);
+    }
 
     setJoined(true);
     setPlayerState('LOBBY');
   };
 
-  const handleAnswerClick = (index: number) => {
-    if (hasAnswered || !socket) return;
+  const handleAnswerClick = async (index: number) => {
+    if (hasAnswered) return;
     playClick();
     setHasAnswered(true);
     setSelectedOptIndex(index);
     setPlayerState('SUBMITTED');
 
     const timeTaken = Date.now() - questionStartTimeRef.current;
-    // Simulate answer validation check
-    const isCorrect = index === 1 || index === 0; // responsive simulation
 
-    socket.emit('submit_answer', {
-      pin,
-      nickname,
-      selectedOptionId: `opt_${index}`,
-      timeTakenMs: timeTaken,
-      isCorrect,
-      basePoints: 1000,
-    });
+    // 1. Socket emit if connected
+    if (socket && socket.connected) {
+      socket.emit('submit_answer', {
+        pin,
+        nickname,
+        selectedOptionId: `opt_${index}`,
+        selectedOptionIndex: index,
+        timeTakenMs: timeTaken,
+        isCorrect: true, // socket server will validate or fallback
+        basePoints: 1000,
+      });
+    }
+
+    // 2. Serverless REST answer submit with instant verification
+    try {
+      const res = await fetch('/api/game/session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'SUBMIT_ANSWER',
+          pin,
+          data: {
+            nickname,
+            selectedOptionIndex: index,
+            timeTakenMs: timeTaken,
+            basePoints: 1000,
+          },
+        }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setLastResult(data);
+        if (data.currentScore !== undefined) setMyScore(data.currentScore);
+        if (data.streak !== undefined) setMyStreak(data.streak);
+        if (data.rank !== undefined) setMyRank(data.rank);
+        if (data.isCorrect) {
+          playCorrect();
+        } else {
+          playWrong();
+        }
+      }
+    } catch (e) {
+      console.warn('REST submit error:', e);
+    }
   };
 
-  const sendReaction = (emoji: string) => {
+  const sendReaction = async (emoji: string) => {
     playClick();
-    if (socket) {
+    if (socket && socket.connected) {
       socket.emit('send_reaction', { pin, emoji, nickname });
     }
+    try {
+      await fetch('/api/game/session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'REACTION',
+          pin,
+          data: { emoji, nickname },
+        }),
+      });
+    } catch (e) {}
   };
 
   return (
@@ -147,9 +292,16 @@ export default function PlayerGamePage() {
             <Zap className="w-8 h-8 text-white animate-pulse" />
           </div>
 
-          <div className="space-y-1">
-            <h1 className="text-3xl font-black">Yarışmaya Katıl</h1>
-            <p className="text-xs text-slate-400">PIN Kodu: <span className="font-bold text-white">{pin}</span></p>
+          <div className="space-y-1.5">
+            <h1 className="text-3xl font-black text-white">Yarışmaya Katıl</h1>
+            {quizInfo && (
+              <div className="text-base font-bold text-brand-400 bg-brand-500/10 py-1 px-3 rounded-xl inline-block border border-brand-500/20">
+                {quizInfo.title}
+              </div>
+            )}
+            <p className="text-xs text-slate-400">
+              {quizInfo?.host ? `Yönetici: ${quizInfo.host} • ` : ''}PIN Kodu: <span className="font-bold text-white font-mono tracking-wider">{pin}</span>
+            </p>
           </div>
 
           <form onSubmit={handleJoin} className="space-y-4">
