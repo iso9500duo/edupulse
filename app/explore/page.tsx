@@ -14,7 +14,6 @@ import {
   BookOpen,
   Crown,
   Sparkles,
-  ArrowUpDown,
 } from 'lucide-react';
 import { useSound } from '@/components/SoundProvider';
 
@@ -73,36 +72,38 @@ function ExploreContent() {
       {/* Header & Search */}
       <div className="space-y-4">
         <div>
-          <h1 className="text-3xl font-black text-white">Quiz ve İçerik Keşfi</h1>
-          <p className="text-sm text-slate-400">MEB müfredatına ve sınıf düzeyine uygun binlerce özgün quiz ve soru</p>
+          <h1 className="text-3xl font-bold text-[#340C24] font-display">
+            Quiz ve İçerik Keşfi
+          </h1>
+          <p className="text-sm text-[#594048]">MEB müfredatına ve sınıf düzeyine uygun binlerce özgün quiz ve değerlendirme testi</p>
         </div>
 
-        {/* Search Bar */}
+        {/* Search Bar with Inset Capsule */}
         <form onSubmit={handleSearchSubmit} className="flex gap-2.5">
           <div className="relative flex-1">
-            <Search className="w-5 h-5 absolute left-4 top-3.5 text-slate-400" />
+            <Search className="w-5 h-5 absolute left-4 top-3.5 text-[#8C6F78]" />
             <input
               type="text"
               placeholder="Quiz adı, konu, ders, öğretmen veya etiket ara..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-12 pr-4 py-3.5 bg-slate-900/90 border border-slate-700/80 rounded-2xl text-white placeholder-slate-400 focus:outline-none focus:border-brand-400 focus:ring-2 focus:ring-brand-500/20 shadow-inner text-sm transition"
+              className="w-full pl-12 pr-4 py-3.5 bg-white border border-[#340C24]/12 rounded-full text-[#340C24] placeholder-[#8C6F78] focus:outline-none focus:border-[#E83389] focus:ring-4 focus:ring-[#E83389]/15 shadow-lumina-level1 text-sm font-medium transition"
             />
           </div>
           <button
             type="submit"
             onClick={playClick}
-            className="px-7 py-3.5 bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white font-black text-sm rounded-2xl shadow-tactile-brand btn-tactile transition"
+            className="btn-lumina-cta px-7 py-3.5 text-sm"
           >
             Ara
           </button>
         </form>
       </div>
 
-      {/* Filter Bar with Bento Glass styling */}
-      <div className="flex flex-wrap items-center gap-3 p-4 bg-slate-900/80 backdrop-blur-xl rounded-2xl border border-white/10 text-xs shadow-lg">
-        <div className="flex items-center gap-1.5 text-slate-300 font-bold mr-2">
-          <Filter className="w-4 h-4 text-brand-400" />
+      {/* Filter Bar with Wayground Lumina styling */}
+      <div className="flex flex-wrap items-center gap-3 p-4 bg-white rounded-2xl border border-[#340C24]/[0.08] text-xs shadow-lumina-level1">
+        <div className="flex items-center gap-1.5 text-[#340C24] font-bold mr-2">
+          <Filter className="w-4 h-4 text-[#E83389]" />
           Filtrele:
         </div>
 
@@ -110,7 +111,7 @@ function ExploreContent() {
         <select
           value={selectedSubject}
           onChange={(e) => setSelectedSubject(e.target.value)}
-          className="bg-slate-800/90 border border-slate-700 text-slate-200 rounded-xl px-3 py-2 focus:outline-none focus:border-brand-500 font-semibold"
+          className="bg-[#F5F1E6] border border-[#340C24]/10 text-[#340C24] rounded-xl px-3 py-2 focus:outline-none focus:border-[#E83389] font-bold"
         >
           <option value="ALL">Tüm Dersler</option>
           <option value="Türk Dili ve Edebiyatı">Türk Dili ve Edebiyatı</option>
@@ -126,7 +127,7 @@ function ExploreContent() {
         <select
           value={selectedGrade}
           onChange={(e) => setSelectedGrade(e.target.value)}
-          className="bg-slate-800/90 border border-slate-700 text-slate-200 rounded-xl px-3 py-2 focus:outline-none focus:border-brand-500 font-semibold"
+          className="bg-[#F5F1E6] border border-[#340C24]/10 text-[#340C24] rounded-xl px-3 py-2 focus:outline-none focus:border-[#E83389] font-bold"
         >
           <option value="ALL">Tüm Sınıflar</option>
           <option value="9">9. Sınıf</option>
@@ -139,7 +140,7 @@ function ExploreContent() {
         <select
           value={selectedDifficulty}
           onChange={(e) => setSelectedDifficulty(e.target.value)}
-          className="bg-slate-800/90 border border-slate-700 text-slate-200 rounded-xl px-3 py-2 focus:outline-none focus:border-brand-500 font-semibold"
+          className="bg-[#F5F1E6] border border-[#340C24]/10 text-[#340C24] rounded-xl px-3 py-2 focus:outline-none focus:border-[#E83389] font-bold"
         >
           <option value="ALL">Tüm Zorluklar</option>
           <option value="EASY">Kolay</option>
@@ -153,11 +154,11 @@ function ExploreContent() {
           onClick={() => setOnlyPremium(!onlyPremium)}
           className={`px-3 py-2 rounded-xl border flex items-center gap-1.5 transition font-bold ${
             onlyPremium
-              ? 'bg-amber-500/20 text-amber-300 border-amber-500/50'
-              : 'bg-slate-800/90 text-slate-400 border-slate-700 hover:text-white'
+              ? 'bg-[#FFE0EC] text-[#E83389] border-[#E83389]/40'
+              : 'bg-[#F5F1E6] text-[#594048] border-[#340C24]/10 hover:text-[#340C24]'
           }`}
         >
-          <Crown className="w-3.5 h-3.5 text-amber-400" />
+          <Crown className="w-3.5 h-3.5 text-[#D97706]" />
           Sadece Premium
         </button>
 
@@ -170,25 +171,25 @@ function ExploreContent() {
               setSelectedDifficulty('ALL');
               setOnlyPremium(false);
             }}
-            className="text-slate-400 hover:text-rose-400 ml-auto font-bold transition"
+            className="text-[#8C6F78] hover:text-rose-600 ml-auto font-bold transition"
           >
             Filtreleri Temizle ✕
           </button>
         )}
       </div>
 
-      {/* Quizzes Grid with Bento Cards */}
+      {/* Quizzes Grid with Lumina Cards */}
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {[1, 2, 3, 4, 5, 6].map((i) => (
-            <div key={i} className="h-64 rounded-3xl bg-slate-900/50 border border-slate-800 animate-pulse" />
+            <div key={i} className="h-64 rounded-3xl bg-white border border-[#340C24]/10 animate-pulse" />
           ))}
         </div>
       ) : quizzes.length === 0 ? (
-        <div className="p-12 text-center rounded-3xl bg-slate-900/50 border border-slate-800 space-y-3">
-          <BookOpen className="w-10 h-10 text-slate-500 mx-auto" />
-          <h3 className="text-lg font-bold text-white">Aradığınız kriterlere uygun quiz bulunamadı</h3>
-          <p className="text-xs text-slate-400">Filtreleri değiştirmeyi deneyebilir veya kendi quizinizi oluşturabilirsiniz.</p>
+        <div className="p-12 text-center rounded-3xl bg-white border border-[#340C24]/[0.08] space-y-3">
+          <BookOpen className="w-10 h-10 text-[#8C6F78] mx-auto" />
+          <h3 className="text-lg font-bold text-[#340C24]">Aradığınız kriterlere uygun quiz bulunamadı</h3>
+          <p className="text-xs text-[#594048]">Filtreleri değiştirmeyi deneyebilir veya kendi quizinizi oluşturabilirsiniz.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -197,59 +198,59 @@ function ExploreContent() {
             return (
               <div
                 key={quiz.id}
-                className="bento-card p-6 flex flex-col justify-between relative group"
+                className="lumina-card p-6 flex flex-col justify-between relative group"
               >
                 {/* Favorite Icon */}
                 <button
                   onClick={() => toggleFavorite(quiz.id)}
-                  className="absolute top-5 right-5 p-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-400 transition"
+                  className="absolute top-5 right-5 p-2 rounded-xl bg-[#F5F1E6] hover:bg-[#FFE0EC] text-[#8C6F78] transition"
                   title="Favorilere Ekle"
                 >
                   <Heart
-                    className={`w-4 h-4 ${isFav ? 'text-rose-500 fill-rose-500' : 'text-slate-400'}`}
+                    className={`w-4 h-4 ${isFav ? 'text-[#E83389] fill-[#E83389]' : 'text-[#8C6F78]'}`}
                   />
                 </button>
 
-                <div className="space-y-3.5 pr-8">
+                <div className="space-y-3 pr-8">
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full bg-brand-500/15 text-brand-300 border border-brand-500/30">
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-[#FFE0EC] text-[#E83389] border border-[#E83389]/20">
                       {quiz.subject?.name || 'Müfredat'}
                     </span>
                     {quiz.isPremium && (
-                      <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30 flex items-center gap-1">
+                      <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#FEF3C7] text-[#D97706] border border-[#D97706]/30 flex items-center gap-1">
                         <Crown className="w-3 h-3" /> PRO
                       </span>
                     )}
                   </div>
 
-                  <h3 className="font-black text-white text-base group-hover:text-brand-300 transition line-clamp-2 leading-snug">
+                  <h3 className="font-bold text-[#340C24] text-base group-hover:text-[#E83389] transition line-clamp-2 leading-snug">
                     {quiz.title}
                   </h3>
 
-                  <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">
+                  <p className="text-xs text-[#594048] line-clamp-2 leading-relaxed">
                     {quiz.description || 'MEB müfredatına uygun interaktif değerlendirme quizi.'}
                   </p>
 
-                  <div className="flex items-center gap-3 text-xs text-slate-400 pt-1 font-medium">
+                  <div className="flex items-center gap-3 text-xs text-[#8C6F78] pt-1 font-medium">
                     <span className="flex items-center gap-1">
-                      <Clock className="w-3.5 h-3.5 text-slate-500" />
+                      <Clock className="w-3.5 h-3.5 text-[#8C6F78]" />
                       {quiz._count?.questions || 0} Soru
                     </span>
                     <span>•</span>
                     <span className="flex items-center gap-1">
-                      <Users className="w-3.5 h-3.5 text-slate-500" />
+                      <Users className="w-3.5 h-3.5 text-[#8C6F78]" />
                       {quiz.playCount || 0} Oynanma
                     </span>
                     <span>•</span>
-                    <span className="text-amber-400 font-bold">⭐ {quiz.rating || 5.0}</span>
+                    <span className="text-[#D97706] font-bold">⭐ {quiz.rating || 5.0}</span>
                   </div>
                 </div>
 
-                <div className="pt-5 mt-4 border-t border-white/10 flex items-center justify-between gap-2.5">
+                <div className="pt-5 mt-4 border-t border-[#340C24]/[0.08] flex items-center justify-between gap-2.5">
                   <Link
                     href={`/solo/${quiz.id}`}
                     onClick={playClick}
-                    className="flex-1 py-2.5 text-center text-xs font-bold rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 transition border border-slate-700/80"
+                    className="flex-1 py-2.5 text-center text-xs font-bold rounded-full bg-[#F5F1E6] hover:bg-[#FFE0EC] text-[#340C24] transition border border-[#340C24]/10"
                   >
                     Bireysel Oyna
                   </Link>
@@ -267,7 +268,7 @@ function ExploreContent() {
                         router.push(`/live/host/${data.pin}`);
                       }
                     }}
-                    className="flex-1 py-2.5 text-center text-xs font-black rounded-xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white shadow-tactile-brand btn-tactile transition flex items-center justify-center gap-1.5"
+                    className="flex-1 py-2.5 text-center text-xs font-bold btn-lumina-cta flex items-center justify-center gap-1.5"
                   >
                     <Play className="w-3.5 h-3.5 fill-white" />
                     Canlı Başlat
@@ -284,7 +285,7 @@ function ExploreContent() {
 
 export default function ExplorePage() {
   return (
-    <Suspense fallback={<div className="min-h-[70vh] flex items-center justify-center text-slate-400">Yükleniyor...</div>}>
+    <Suspense fallback={<div className="min-h-[70vh] flex items-center justify-center text-[#8C6F78]">Yükleniyor...</div>}>
       <ExploreContent />
     </Suspense>
   );

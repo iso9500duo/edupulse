@@ -33,7 +33,7 @@ export default function Navbar() {
 
   return (
     <header className="sticky top-2 sm:top-3 z-50 px-2 sm:px-6 max-w-7xl mx-auto transition-all">
-      <nav className="rounded-2xl sm:rounded-3xl bg-slate-900/80 backdrop-blur-2xl border border-white/10 shadow-2xl shadow-black/40 px-3 sm:px-5">
+      <nav className="rounded-2xl sm:rounded-3xl bg-white/95 backdrop-blur-2xl border border-[#340C24]/[0.08] shadow-lumina-level1 px-3 sm:px-5">
         <div className="flex items-center justify-between h-16">
           {/* Logo & Brand */}
           <div className="flex items-center space-x-5">
@@ -42,70 +42,70 @@ export default function Navbar() {
               onClick={playClick}
               className="flex items-center space-x-2.5 text-xl font-black tracking-tight group"
             >
-              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-brand-600 via-indigo-500 to-accent-cyan flex items-center justify-center shadow-lg shadow-brand-500/30 group-hover:scale-105 group-hover:shadow-brand-500/50 transition transform">
+              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#FF7A00] to-[#E83389] flex items-center justify-center shadow-md shadow-[#E83389]/25 group-hover:scale-105 transition transform">
                 <Zap className="w-5 h-5 text-white animate-pulse" />
               </div>
-              <span className="bg-gradient-to-r from-white via-indigo-100 to-brand-300 bg-clip-text text-transparent font-display">
-                Edu<span className="text-brand-400">Pulse</span>
+              <span className="font-display font-extrabold text-[#340C24]">
+                Edu<span className="text-[#E83389]">Pulse</span>
               </span>
             </Link>
 
             {/* Desktop Navigation */}
-            <div className="hidden lg:flex items-center space-x-1 text-xs font-bold text-slate-300">
+            <div className="hidden lg:flex items-center space-x-1 text-xs font-bold text-[#594048]">
               <Link
                 href="/explore"
                 onClick={playClick}
-                className="px-3 py-2 rounded-xl hover:text-white hover:bg-white/5 transition flex items-center gap-1.5"
+                className="px-3 py-2 rounded-xl hover:text-[#340C24] hover:bg-[#F5F1E6] transition flex items-center gap-1.5"
               >
-                <Compass className="w-4 h-4 text-accent-cyan" />
+                <Compass className="w-4 h-4 text-[#0284C7]" />
                 Keşfet
               </Link>
               <Link
                 href="/courses"
                 onClick={playClick}
-                className="px-3 py-2 rounded-xl hover:text-white hover:bg-white/5 transition flex items-center gap-1.5"
+                className="px-3 py-2 rounded-xl hover:text-[#340C24] hover:bg-[#F5F1E6] transition flex items-center gap-1.5"
               >
-                <BookOpen className="w-4 h-4 text-emerald-400" />
+                <BookOpen className="w-4 h-4 text-[#2E7D32]" />
                 Kurslar
               </Link>
               <Link
                 href="/study"
                 onClick={playClick}
-                className="px-3 py-2 rounded-xl hover:text-white hover:bg-white/5 transition flex items-center gap-1.5"
+                className="px-3 py-2 rounded-xl hover:text-[#340C24] hover:bg-[#F5F1E6] transition flex items-center gap-1.5"
               >
-                <GraduationCap className="w-4 h-4 text-accent-amber" />
+                <GraduationCap className="w-4 h-4 text-[#D97706]" />
                 Solo Çalış
               </Link>
               <Link
                 href="/question-bank"
                 onClick={playClick}
-                className="px-3 py-2 rounded-xl hover:text-white hover:bg-white/5 transition flex items-center gap-1.5"
+                className="px-3 py-2 rounded-xl hover:text-[#340C24] hover:bg-[#F5F1E6] transition flex items-center gap-1.5"
               >
-                <Layers className="w-4 h-4 text-purple-400" />
+                <Layers className="w-4 h-4 text-[#6D28D9]" />
                 Soru Bankası
               </Link>
               <Link
                 href="/classes"
                 onClick={playClick}
-                className="px-3 py-2 rounded-xl hover:text-white hover:bg-white/5 transition flex items-center gap-1.5"
+                className="px-3 py-2 rounded-xl hover:text-[#340C24] hover:bg-[#F5F1E6] transition flex items-center gap-1.5"
               >
-                <Gamepad2 className="w-4 h-4 text-blue-400" />
+                <Gamepad2 className="w-4 h-4 text-[#712ae2]" />
                 Sınıflar & Ödev
               </Link>
               <Link
                 href="/premium"
                 onClick={playClick}
-                className="px-3 py-2 rounded-xl hover:text-white bg-amber-500/10 text-amber-300 border border-amber-500/20 transition flex items-center gap-1.5"
+                className="px-3 py-2 rounded-xl bg-[#FFE0EC] text-[#E83389] border border-[#E83389]/20 hover:bg-[#FFD8E8] transition flex items-center gap-1.5 font-bold"
               >
-                <Crown className="w-4 h-4 text-amber-400" />
+                <Crown className="w-4 h-4 text-[#E83389]" />
                 Premium
               </Link>
               <Link
                 href="/marketplace"
                 onClick={playClick}
-                className="px-3 py-2 rounded-xl hover:text-white hover:bg-white/5 transition flex items-center gap-1.5"
+                className="px-3 py-2 rounded-xl hover:text-[#E83389] hover:bg-[#FFE0EC]/60 transition flex items-center gap-1.5"
               >
-                <ShoppingBag className="w-4 h-4 text-pink-400" />
+                <ShoppingBag className="w-4 h-4 text-[#E83389]" />
                 Mağaza
               </Link>
             </div>
@@ -116,35 +116,34 @@ export default function Navbar() {
             {/* Quick Sound Toggle */}
             <button
               onClick={toggleMute}
-              className="p-2 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 transition"
+              className="p-2 rounded-xl bg-[#F5F1E6] hover:bg-[#FFE0EC] text-[#594048] hover:text-[#340C24] transition"
               title={isMuted ? 'Sesi Aç' : 'Sesi Kapat'}
             >
-              {isMuted ? <VolumeX className="w-4 h-4 text-rose-400" /> : <Volume2 className="w-4 h-4 text-emerald-400" />}
+              {isMuted ? <VolumeX className="w-4 h-4 text-rose-500" /> : <Volume2 className="w-4 h-4 text-[#2E7D32]" />}
             </button>
 
             {/* Quick Demo Switcher Dropdown */}
             <div className="relative">
               <button
                 onClick={() => setDemoMenuOpen(!demoMenuOpen)}
-                className="px-2.5 py-1.5 text-xs font-semibold rounded-lg bg-indigo-600/20 text-indigo-300 border border-indigo-500/30 hover:bg-indigo-600/30 transition flex items-center gap-1.5"
+                className="px-2.5 py-1.5 text-xs font-semibold rounded-xl bg-[#FFF0F4] text-[#E83389] border border-[#E83389]/25 hover:bg-[#FFE0EC] transition flex items-center gap-1.5"
               >
-                <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
+                <Sparkles className="w-3.5 h-3.5 text-[#E83389]" />
                 <span className="hidden sm:inline">Hızlı Rol:</span> {user?.role || 'Demo Seç'}
               </button>
 
               {demoMenuOpen && (
-                <div className="absolute right-0 mt-2 w-52 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl p-2 z-50 text-xs">
-                  <div className="px-2 py-1 text-slate-400 font-medium">1-Tıkla Hesap Değiştir:</div>
+                <div className="absolute right-0 mt-2 w-52 bg-white border border-[#340C24]/10 rounded-2xl shadow-lumina-level2 p-2 z-50 text-xs">
+                  <div className="px-2 py-1 text-[#8C6F78] font-bold">1-Tıkla Hesap Değiştir:</div>
                   <button
                     onClick={async () => {
                       playClick();
                       await loginAsDemo('TEACHER');
                       setDemoMenuOpen(false);
                     }}
-                    className="w-full text-left px-3 py-2 rounded-lg hover:bg-indigo-600/30 text-slate-200 flex items-center justify-between"
+                    className="w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-[#FFF0F4] hover:text-[#E83389] font-medium transition"
                   >
-                    <span>👩‍🏫 Öğretmen (Ayşe)</span>
-                    <span className="text-[10px] bg-indigo-500/20 text-indigo-300 px-1.5 py-0.5 rounded">PRO</span>
+                    👩‍🏫 Öğretmen (Tüm Yetkiler)
                   </button>
                   <button
                     onClick={async () => {
@@ -152,10 +151,9 @@ export default function Navbar() {
                       await loginAsDemo('STUDENT');
                       setDemoMenuOpen(false);
                     }}
-                    className="w-full text-left px-3 py-2 rounded-lg hover:bg-emerald-600/30 text-slate-200 flex items-center justify-between"
+                    className="w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-[#FFF0F4] hover:text-[#E83389] font-medium transition"
                   >
-                    <span>👨‍🎓 Öğrenci (Emre)</span>
-                    <span className="text-[10px] bg-emerald-500/20 text-emerald-300 px-1.5 py-0.5 rounded">LVL 4</span>
+                    👨‍🎓 Öğrenci (Oyun & Solo)
                   </button>
                   <button
                     onClick={async () => {
@@ -163,52 +161,41 @@ export default function Navbar() {
                       await loginAsDemo('ADMIN');
                       setDemoMenuOpen(false);
                     }}
-                    className="w-full text-left px-3 py-2 rounded-lg hover:bg-rose-600/30 text-slate-200 flex items-center justify-between"
+                    className="w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-[#FFF0F4] hover:text-[#E83389] font-medium transition"
                   >
-                    <span>👑 Yönetici (Admin)</span>
-                    <span className="text-[10px] bg-rose-500/20 text-rose-300 px-1.5 py-0.5 rounded">ALL</span>
+                    👑 Yönetici (Admin Paneli)
                   </button>
                 </div>
               )}
             </div>
 
-            {/* Quick PIN Join Shortcut */}
-            <Link
-              href="/join"
-              onClick={playClick}
-              className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-800/90 hover:bg-slate-700/90 text-white border border-slate-700/80 transition"
-            >
-              <Zap className="w-3.5 h-3.5 text-accent-cyan" />
-              <span>PIN Gir</span>
-            </Link>
-
-            {/* Create Quiz Shortcut with 3D tactile button */}
-            <Link
-              href="/creator"
-              onClick={playClick}
-              className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-black bg-gradient-to-r from-brand-600 to-indigo-600 text-white shadow-tactile-brand btn-tactile transition"
-            >
-              <PlusCircle className="w-3.5 h-3.5" />
-              <span>Quiz Oluştur</span>
-            </Link>
-
-            {/* User Profile or Login */}
+            {/* User State */}
             {user ? (
-              <div className="flex items-center space-x-2">
-                <div className="hidden md:flex items-center space-x-2 bg-slate-800/80 px-2.5 py-1 rounded-lg border border-slate-700/60 text-xs">
-                  <div className="flex items-center text-amber-400 font-bold">
-                    <Flame className="w-3.5 h-3.5 mr-0.5 text-amber-500 fill-amber-500" />
+              <div className="flex items-center space-x-3">
+                <Link
+                  href="/creator"
+                  onClick={playClick}
+                  className="hidden md:flex items-center space-x-1.5 btn-lumina-cta px-3 py-1.5 text-xs shadow-sm"
+                >
+                  <PlusCircle className="w-3.5 h-3.5" />
+                  <span>Quiz Oluştur</span>
+                </Link>
+
+                <div className="hidden sm:flex items-center space-x-2 text-xs">
+                  <div className="flex items-center bg-[#FEF3C7] text-[#D97706] border border-[#D97706]/20 px-2 py-1 rounded-full font-bold">
+                    <Flame className="w-3.5 h-3.5 mr-0.5 fill-[#D97706]" />
                     {user.streak || 0}
                   </div>
-                  <div className="text-slate-500">|</div>
-                  <div className="text-indigo-300 font-medium">{user.xp || 0} XP</div>
+                  <div className="flex items-center bg-[#EDE9FE] text-[#6D28D9] border border-[#6D28D9]/20 px-2 py-1 rounded-full font-bold">
+                    {user.xp || 0} XP
+                  </div>
                 </div>
 
                 <div className="flex items-center space-x-1">
                   {user.role === 'ADMIN' && (
                     <Link
                       href="/admin"
-                      className="p-2 rounded-lg bg-rose-500/10 text-rose-300 hover:bg-rose-500/20 transition"
+                      className="p-2 rounded-xl bg-[#FFE0EC] text-[#E83389] hover:bg-[#FFD8E8] transition"
                       title="Admin Paneli"
                     >
                       <Shield className="w-4 h-4" />
@@ -216,7 +203,7 @@ export default function Navbar() {
                   )}
                   <Link
                     href="/reports"
-                    className="p-2 rounded-lg bg-slate-800 text-slate-300 hover:text-white transition"
+                    className="p-2 rounded-xl bg-[#F5F1E6] text-[#340C24] hover:bg-[#FFE0EC] transition"
                     title="Raporlar & Analiz"
                   >
                     <User className="w-4 h-4" />
@@ -226,7 +213,7 @@ export default function Navbar() {
                       playClick();
                       logout();
                     }}
-                    className="p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-rose-400 transition"
+                    className="p-2 rounded-xl bg-[#F5F1E6] text-[#8C6F78] hover:text-rose-600 transition"
                     title="Çıkış Yap"
                   >
                     <LogOut className="w-4 h-4" />
@@ -237,13 +224,13 @@ export default function Navbar() {
               <div className="flex items-center space-x-2">
                 <Link
                   href="/login"
-                  className="px-3 py-1.5 text-xs font-medium text-slate-300 hover:text-white transition"
+                  className="px-3 py-1.5 text-xs font-semibold text-[#340C24] hover:bg-[#F5F1E6] rounded-xl transition"
                 >
                   Giriş
                 </Link>
                 <Link
                   href="/register"
-                  className="px-3 py-1.5 text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg transition"
+                  className="btn-lumina-cta px-3.5 py-1.5 text-xs text-white"
                 >
                   Kayıt Ol
                 </Link>
@@ -253,82 +240,82 @@ export default function Navbar() {
             {/* Mobile menu button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2 rounded-lg bg-slate-800 text-slate-300"
+              className="lg:hidden p-2 rounded-xl bg-[#F5F1E6] text-[#340C24]"
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
         </div>
 
-      {/* Mobile Drawer */}
-      {mobileMenuOpen && (
-        <div className="lg:hidden bg-slate-900 border-b border-slate-800 px-4 pt-2 pb-4 space-y-1 text-sm">
-          <Link
-            href="/explore"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block py-2 text-slate-300 hover:text-white"
-          >
-            🔍 Keşfet
-          </Link>
-          <Link
-            href="/creator"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block py-2 text-brand-400 font-semibold"
-          >
-            ✏️ Quiz Oluştur
-          </Link>
-          <Link
-            href="/courses"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block py-2 text-slate-300 hover:text-white"
-          >
-            📚 Kurslar
-          </Link>
-          <Link
-            href="/study"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block py-2 text-slate-300 hover:text-white"
-          >
-            🎯 Solo & Flashcards
-          </Link>
-          <Link
-            href="/classes"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block py-2 text-slate-300 hover:text-white"
-          >
-            👥 Sınıflar & Ödev
-          </Link>
-          <Link
-            href="/question-bank"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block py-2 text-slate-300 hover:text-white"
-          >
-            📦 Soru Bankası
-          </Link>
-          <Link
-            href="/reports"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block py-2 text-slate-300 hover:text-white"
-          >
-            📊 Raporlar & Analiz
-          </Link>
-          <Link
-            href="/marketplace"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block py-2 text-pink-400 font-medium"
-          >
-            🛍️ İçerik Mağazası
-          </Link>
-          <Link
-            href="/premium"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block py-2 text-amber-400 font-medium"
-          >
-            👑 Premium Üyelik
-          </Link>
-        </div>
-      )}
-    </nav>
-  </header>
+        {/* Mobile Drawer */}
+        {mobileMenuOpen && (
+          <div className="lg:hidden bg-white border-t border-[#340C24]/[0.08] px-4 pt-3 pb-5 space-y-1 text-sm font-semibold text-[#594048]">
+            <Link
+              href="/explore"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block py-2 hover:text-[#340C24]"
+            >
+              🔍 Keşfet
+            </Link>
+            <Link
+              href="/creator"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block py-2 text-[#E83389]"
+            >
+              ✏️ Quiz Oluştur
+            </Link>
+            <Link
+              href="/courses"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block py-2 hover:text-[#340C24]"
+            >
+              📚 Kurslar
+            </Link>
+            <Link
+              href="/study"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block py-2 hover:text-[#340C24]"
+            >
+              🎯 Solo & Flashcards
+            </Link>
+            <Link
+              href="/classes"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block py-2 hover:text-[#340C24]"
+            >
+              👥 Sınıflar & Ödev
+            </Link>
+            <Link
+              href="/question-bank"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block py-2 hover:text-[#340C24]"
+            >
+              📦 Soru Bankası
+            </Link>
+            <Link
+              href="/reports"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block py-2 hover:text-[#340C24]"
+            >
+              📊 Raporlar & Analiz
+            </Link>
+            <Link
+              href="/marketplace"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block py-2 text-[#E83389]"
+            >
+              🛍️ İçerik Mağazası
+            </Link>
+            <Link
+              href="/premium"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block py-2 text-[#D97706]"
+            >
+              👑 Premium Üyelik
+            </Link>
+          </div>
+        )}
+      </nav>
+    </header>
   );
 }

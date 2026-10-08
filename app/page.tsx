@@ -18,6 +18,9 @@ import {
   CheckCircle2,
   Compass,
   Trophy,
+  Target,
+  QrCode,
+  GraduationCap,
 } from 'lucide-react';
 import { useSound } from '@/components/SoundProvider';
 import { useAuth } from '@/components/AuthProvider';
@@ -67,7 +70,6 @@ export default function HomePage() {
       });
       const data = await res.json();
       if (data.success && data.result) {
-        // Automatically save to database as quiz
         const saveRes = await fetch('/api/quizzes', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -97,64 +99,112 @@ export default function HomePage() {
 
   return (
     <div className="space-y-16 pb-20">
-      {/* 1. HERO SECTION WITH COSMIC AURORA MESH */}
-      <section className="relative overflow-hidden pt-10 pb-16 px-4 sm:px-6 lg:px-8 bg-aurora-mesh rounded-3xl border border-white/10 shadow-2xl mx-2 sm:mx-6 mt-4">
-        <div className="absolute inset-0 bg-dot-grid opacity-30 pointer-events-none" />
+      {/* 1. HERO SECTION: WARM CANVAS & WAYGROUND LUMINA */}
+      <section className="relative overflow-hidden pt-12 pb-16 px-4 sm:px-6 lg:px-8 bg-lumina-canvas rounded-3xl border border-[#340C24]/[0.08] shadow-lumina-level1 mx-2 sm:mx-6 mt-4">
+        {/* Subtle Warm Ambient Glow */}
+        <div className="absolute inset-0 bg-lumina-dots opacity-40 pointer-events-none" />
 
-        <div className="max-w-5xl mx-auto text-center space-y-8 relative z-10">
-          {/* Glowing Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-900/80 border border-brand-500/30 text-brand-300 text-xs font-bold shadow-lg shadow-brand-500/20 backdrop-blur-md">
-            <span className="flex h-2 w-2 rounded-full bg-brand-400 animate-ping" />
-            <Sparkles className="w-3.5 h-3.5 text-brand-400" />
-            <span>Türkiye'nin Yeni Nesil İnteraktif Eğitim & Canlı Yarışma Platformu</span>
+        {/* Floating Educator Co-Presence Cursor Pills (Stitch Design Specification) */}
+        <div className="hidden lg:flex copresence-cursor top-8 left-12">
+          <span className="w-2 h-2 rounded-full bg-[#E83389] animate-ping" />
+          <span>Gamze Öğretmen</span>
+        </div>
+        <div className="hidden lg:flex copresence-cursor top-12 right-16 border-[#FF7A00]">
+          <Sparkles className="w-3 h-3 text-[#FF7A00]" />
+          <span>✦ AI Pedagogik Asistan</span>
+        </div>
+
+        <div className="max-w-4xl mx-auto text-center space-y-7 relative z-10">
+          {/* Warm Lumina Badge */}
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-[#340C24]/10 text-[#340C24] text-xs font-bold shadow-lumina-pill backdrop-blur-md">
+            <span className="flex h-2 w-2 rounded-full bg-[#E83389] animate-ping" />
+            <Sparkles className="w-3.5 h-3.5 text-[#E83389]" />
+            <span>Wayground Lumina • Türkiye'nin Yeni Nesil İnteraktif Eğitim Platformu</span>
           </div>
 
-          {/* High-Impact Headline */}
-          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight text-white leading-tight font-display">
-            Öğrenmeyi Canlandır,{' '}
-            <span className="bg-gradient-to-r from-brand-400 via-indigo-300 to-accent-cyan bg-clip-text text-transparent">
-              Zirveye Yarış!
-            </span>
+          {/* Display Prompt Headline with Stylistic Italics */}
+          <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-[#340C24] leading-tight font-display">
+            Bugün ne <span className="italic text-[#E83389]">öğretmek</span> istersiniz?
           </h1>
 
-          <p className="max-w-2xl mx-auto text-slate-300 text-sm sm:text-lg leading-relaxed font-normal">
-            Canlı sınıf yarışmaları, tek başına solo modlar, MEB uyumlu 20 soru türü ve yapay zekâ ile saniyeler içinde quiz üretimi tek bir platformda.
+          <p className="max-w-2xl mx-auto text-[#594048] text-base sm:text-lg leading-relaxed font-normal">
+            Eğitimi <span className="italic font-semibold text-[#340C24]">zahmetsiz</span>, öğrenmeyi <span className="italic font-semibold text-[#FF7A00]">eğlenceli</span> kılan yeni nesil sınıf platformu. MEB müfredatı, 20 soru türü ve anında AI quiz üretimi.
           </p>
 
-          {/* Quick PIN Join Box with 3D tactile styling */}
-          <div className="max-w-md mx-auto bg-slate-900/90 p-3 sm:p-4 rounded-3xl border border-white/15 shadow-2xl backdrop-blur-xl transition hover:border-brand-500/50">
-            <form onSubmit={handleJoinPin} className="flex gap-2.5">
+          {/* Inset Search / AI Prompt Bar */}
+          <div className="max-w-xl mx-auto bg-white p-2 sm:p-2.5 rounded-full border border-[#340C24]/12 shadow-lumina-level2 transition focus-within:border-[#E83389] focus-within:ring-4 focus-within:ring-[#E83389]/15">
+            <div className="flex items-center gap-2">
+              <div className="pl-3.5 text-[#8C6F78]">
+                <Sparkles className="w-5 h-5 text-[#E83389]" />
+              </div>
               <input
                 type="text"
-                placeholder="6 Haneli Oyun PIN Kodunu Gir"
+                placeholder="Örn: 10. Sınıf Biyoloji Mitoz Bölünme, 10 soru..."
+                value={aiTopic}
+                onChange={(e) => setAiTopic(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    handleQuickAiGenerate();
+                  }
+                }}
+                className="flex-1 bg-transparent text-[#340C24] placeholder-[#8C6F78] text-xs sm:text-sm font-medium focus:outline-none px-1"
+              />
+              <button
+                onClick={handleQuickAiGenerate}
+                disabled={aiLoading}
+                className="btn-lumina-cta px-5 py-3 text-xs sm:text-sm flex items-center gap-1.5 whitespace-nowrap shrink-0"
+              >
+                {aiLoading ? (
+                  <span>Üretiliyor...</span>
+                ) : (
+                  <>
+                    <span>AI ile Oluştur</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+
+          {/* Quick PIN Join Box */}
+          <div className="max-w-md mx-auto bg-white p-4 rounded-2xl border border-[#340C24]/[0.08] shadow-lumina-level1">
+            <div className="text-xs font-bold text-[#594048] mb-2 flex items-center justify-between">
+              <span>🎮 Canlı Yarışmaya Katıl</span>
+              <span className="text-[11px] text-[#8C6F78] font-normal">Öğrenci Girişi</span>
+            </div>
+            <form onSubmit={handleJoinPin} className="flex gap-2">
+              <input
+                type="text"
+                placeholder="6 Haneli PIN Kodu"
                 value={pinInput}
                 onChange={(e) => setPinInput(e.target.value.toUpperCase())}
                 maxLength={8}
-                className="flex-1 bg-slate-800/90 text-white placeholder-slate-400 text-center font-black tracking-widest text-lg sm:text-xl rounded-2xl px-4 py-3.5 border border-slate-700/80 focus:outline-none focus:border-brand-400 focus:ring-2 focus:ring-brand-500/20 transition shadow-inner font-mono"
+                className="flex-1 bg-[#F5F1E6] text-[#340C24] placeholder-[#8C6F78] text-center font-extrabold tracking-widest text-base sm:text-lg rounded-xl px-3 py-2.5 border border-[#340C24]/10 focus:outline-none focus:border-[#E83389] transition font-mono"
               />
               <button
                 type="submit"
                 onClick={playClick}
-                className="px-6 py-3.5 bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white font-black text-base rounded-2xl shadow-tactile-brand btn-tactile transition flex items-center gap-2"
+                className="btn-lumina-cta px-5 py-2.5 text-xs font-bold flex items-center gap-1.5 shrink-0"
               >
-                <Play className="w-4 h-4 fill-white" />
+                <Play className="w-3.5 h-3.5 fill-white" />
                 <span>Katıl</span>
               </button>
             </form>
-            <div className="pt-2 text-[11px] text-slate-400 flex items-center justify-center gap-1.5 font-medium">
-              <span>Akıllı tahta veya öğretmenin paylaştığı karekodu da okutabilirsiniz</span>
+            <div className="pt-2 text-[11px] text-[#8C6F78] flex items-center justify-center gap-1 font-medium">
+              <QrCode className="w-3.5 h-3.5 text-[#E83389]" />
+              <span>Akıllı tahta karekodunu okutarak da doğrudan katılabilirsiniz</span>
             </div>
           </div>
 
-          {/* Action Buttons */}
-          <div className="flex flex-wrap items-center justify-center gap-3 pt-1">
+          {/* Action Links */}
+          <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
             <Link
               href="/creator"
               onClick={playClick}
-              className="px-6 py-3.5 rounded-2xl bg-gradient-to-r from-brand-600 via-indigo-600 to-accent-cyan text-white font-black text-sm shadow-tactile-brand btn-tactile transition flex items-center gap-2"
+              className="btn-lumina-cta px-5 py-3 text-xs sm:text-sm flex items-center gap-2"
             >
-              <PlusCircle className="w-4 h-4 text-white" />
-              <span>Yeni Quiz Oluştur</span>
+              <PlusCircle className="w-4 h-4" />
+              <span>Sıfırdan Quiz Tasarla</span>
             </Link>
 
             <button
@@ -162,49 +212,97 @@ export default function HomePage() {
                 playClick();
                 setAiModalOpen(true);
               }}
-              className="px-6 py-3.5 rounded-2xl bg-slate-900 hover:bg-slate-800 text-purple-300 font-bold text-sm border border-purple-500/40 shadow-lg shadow-purple-900/20 hover:border-purple-400 transition flex items-center gap-2"
+              className="btn-lumina-secondary px-5 py-3 text-xs sm:text-sm flex items-center gap-2"
             >
-              <BrainCircuit className="w-4 h-4 text-purple-400 animate-pulse" />
-              <span>AI ile Quiz Üret</span>
+              <BrainCircuit className="w-4 h-4 text-[#E83389]" />
+              <span>AI Quiz Sihirbazı</span>
             </button>
 
             <Link
               href="/study"
               onClick={playClick}
-              className="px-6 py-3.5 rounded-2xl bg-slate-900/80 hover:bg-slate-800 text-emerald-300 font-bold text-sm border border-emerald-500/30 transition flex items-center gap-2"
+              className="px-5 py-3 rounded-full bg-white hover:bg-[#F5F1E6] text-[#340C24] font-bold text-xs sm:text-sm border border-[#340C24]/12 shadow-sm transition flex items-center gap-2"
             >
-              <Award className="w-4 h-4 text-emerald-400" />
+              <Award className="w-4 h-4 text-[#D97706]" />
               <span>Solo Modlar & Flashcards</span>
             </Link>
           </div>
         </div>
       </section>
 
-      {/* 2. BENTO GRID FEATURE SHOWCASE */}
+      {/* 2. SUBJECT & RESOURCE SQUIRCLE TILES (Stitch Design Specification) */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-xl sm:text-2xl font-bold text-[#340C24] font-display">
+              Müfredat & Ders Alanları
+            </h2>
+            <p className="text-xs text-[#594048]">Pedagojik kazanımlara göre yapılandırılmış interaktif içerikler</p>
+          </div>
+          <Link
+            href="/explore"
+            onClick={playClick}
+            className="text-xs font-bold text-[#E83389] hover:text-[#B40064] flex items-center gap-1 transition"
+          >
+            Tüm Dersler <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5">
+          {[
+            { name: 'Matematik', icon: '📐', bg: 'bg-[#FEF3C7]', text: 'text-[#D97706]', desc: 'Sayılar & Geometri' },
+            { name: 'Fen Bilimleri', icon: '🔬', bg: 'bg-[#E0F2FE]', text: 'text-[#0284C7]', desc: 'Fizik, Kimya, Biyo' },
+            { name: 'Edebiyat', icon: '📖', bg: 'bg-[#EDE9FE]', text: 'text-[#6D28D9]', desc: 'Dil Bilgisi & Metin' },
+            { name: 'Tarih & Sosyal', icon: '🏛️', bg: 'bg-[#E8F5E9]', text: 'text-[#2E7D32]', desc: 'Tarih & Coğrafya' },
+            { name: 'Yabancı Dil', icon: '🌍', bg: 'bg-[#FFE0EC]', text: 'text-[#E83389]', desc: 'İngilizce & Almanca' },
+            { name: 'Kodlama & AI', icon: '💻', bg: 'bg-[#EADDFF]', text: 'text-[#712ae2]', desc: 'Bilişim & Yazılım' },
+          ].map((subj, idx) => (
+            <Link
+              key={idx}
+              href={`/explore?subject=${encodeURIComponent(subj.name)}`}
+              onClick={playClick}
+              className="lumina-card p-4 text-center space-y-2.5 hover:scale-105 transition-all group flex flex-col items-center justify-center"
+            >
+              <div className={`w-14 h-14 rounded-2xl ${subj.bg} ${subj.text} flex items-center justify-center text-2xl shadow-sm group-hover:rotate-6 transition transform`}>
+                {subj.icon}
+              </div>
+              <div>
+                <div className="font-bold text-xs sm:text-sm text-[#340C24] group-hover:text-[#E83389] transition">
+                  {subj.name}
+                </div>
+                <div className="text-[10px] text-[#8C6F78] mt-0.5">
+                  {subj.desc}
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* 3. STRUCTURAL BENTO GRID & AI "ANALYZE" SHEET (Stitch Specification) */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          {/* Bento Card 1: Live Multiplayer Game (Span 2) */}
-          <div className="md:col-span-2 bento-card bento-card-interactive p-7 flex flex-col justify-between">
+          {/* Card 1: Canlı Sınıf Yarışması Arenası (Span 2) */}
+          <div className="md:col-span-2 lumina-card p-7 flex flex-col justify-between">
             <div className="space-y-3">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/20 text-xs font-bold">
-                <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping" />
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FFE0EC] text-[#E83389] text-xs font-bold border border-[#E83389]/20">
+                <span className="w-2 h-2 rounded-full bg-[#E83389] animate-ping" />
                 CANLI SINIF YARIŞMASI
               </div>
-              <h3 className="text-2xl font-black text-white">
-                Akıllı Tahta & Gerçek Zamanlı Çok Oyunculu Yarışma
+              <h3 className="text-2xl font-bold text-[#340C24]">
+                Akıllı Tahta & Çok Oyunculu Gerçek Zamanlı Arena
               </h3>
-              <p className="text-xs text-slate-300 max-w-xl leading-relaxed">
-                Her oyun için benzersiz karekod (QR Code), anlık soru geri sayımı, hız bonusu, canlı podyum ve reaksiyon emojileriyle tüm sınıfı yarışmaya dahil edin.
+              <p className="text-xs text-[#594048] max-w-xl leading-relaxed">
+                Her oturum için otomatik oluşturulan benzersiz karekod (QR Code), anlık soru geri sayımı, hız bonusu, canlı podyum ve reaksiyon emojileriyle tüm sınıfı yarışmaya dahil edin.
               </p>
             </div>
 
-            {/* Interactive simulation preview inside card */}
-            <div className="mt-6 pt-4 border-t border-white/10 flex flex-wrap items-center justify-between gap-4">
+            <div className="mt-6 pt-5 border-t border-[#340C24]/[0.08] flex flex-wrap items-center justify-between gap-4">
               <div className="flex items-center gap-2">
                 {['🦊 Ayşe', '🚀 Emre', '⚡ Can', '🦉 Zeynep'].map((name, i) => (
                   <span
                     key={i}
-                    className="px-3 py-1.5 rounded-xl bg-slate-800/90 border border-slate-700 text-xs font-bold text-white shadow-sm"
+                    className="px-3 py-1.5 rounded-full bg-[#F5F1E6] text-[#340C24] text-xs font-bold border border-[#340C24]/10 shadow-sm"
                   >
                     {name}
                   </span>
@@ -214,7 +312,7 @@ export default function HomePage() {
               <Link
                 href="/explore"
                 onClick={playClick}
-                className="px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs shadow-md transition flex items-center gap-1.5"
+                className="btn-lumina-cta px-4 py-2 text-xs flex items-center gap-1.5"
               >
                 <span>Hemen Canlı Oyun Başlat</span>
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -222,19 +320,30 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Bento Card 2: AI Quiz Studio */}
-          <div className="bento-card bento-card-interactive p-7 flex flex-col justify-between">
+          {/* Card 2: Floating AI "Analyze" Sheet (DESIGN.md line 232-235) */}
+          <div className="lumina-card p-7 flex flex-col justify-between relative overflow-hidden border-[#E83389]/30 bg-gradient-to-b from-white to-[#FFF8F8]">
             <div className="space-y-3">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 text-purple-400 border border-purple-500/20 text-xs font-bold">
-                <BrainCircuit className="w-3.5 h-3.5" />
-                AI QUESTION STUDIO
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EDE9FE] text-[#6D28D9] text-xs font-bold border border-[#6D28D9]/20">
+                <Sparkles className="w-3.5 h-3.5 text-[#6D28D9]" />
+                ✦ ANALİZ ET & ÖNER
               </div>
-              <h3 className="text-2xl font-black text-white">
-                Yapay Zekâ ile Anında Soru Üretimi
+              <h3 className="text-xl font-bold text-[#340C24]">
+                Akıllı Pedagojik Tanı
               </h3>
-              <p className="text-xs text-slate-300 leading-relaxed">
-                Ders ve kazanım belirleyin; yapay zekâ MEB formatında çeldiricileri, cevap açıklamalarını ve süreleri otomatik hazırlasın.
-              </p>
+              <div className="space-y-2 text-xs text-[#594048] bg-[#FDFBF7] p-3 rounded-xl border border-[#340C24]/[0.08]">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-[#2E7D32]" />
+                  <span>Kazanım: 10. Sınıf Edebiyat Hikâye</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-[#E83389]" />
+                  <span>Öneri: 8 soruluk pekiştirme yarışması</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-[#0284C7]" />
+                  <span>Çeldiriciler MEB kazanımına uygun</span>
+                </div>
+              </div>
             </div>
 
             <button
@@ -242,66 +351,77 @@ export default function HomePage() {
                 playClick();
                 setAiModalOpen(true);
               }}
-              className="mt-6 w-full py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-xs rounded-xl shadow-md transition flex items-center justify-center gap-2"
+              className="mt-5 w-full btn-lumina-cta py-2.5 text-xs flex items-center justify-center gap-2"
             >
-              <Sparkles className="w-4 h-4 text-purple-200" />
-              <span>AI Quiz Sihirbazını Aç</span>
+              <span>Alıştırma Kaynaklarını Bul →</span>
             </button>
           </div>
 
-          {/* Bento Card 3: 20 Question Types */}
-          <div className="bento-card bento-card-interactive p-7 flex flex-col justify-between">
+          {/* Card 3: 20 Soru Türü */}
+          <div className="lumina-card p-7 flex flex-col justify-between">
             <div className="space-y-3">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 text-xs font-bold">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#E0F2FE] text-[#0284C7] text-xs font-bold border border-[#0284C7]/20">
                 20 FARKLI SORU TÜRÜ
               </div>
-              <h3 className="text-xl font-black text-white">
+              <h3 className="text-xl font-bold text-[#340C24]">
                 Zengin ve İnteraktif Değerlendirme
               </h3>
-              <p className="text-xs text-slate-300 leading-relaxed">
+              <p className="text-xs text-[#594048] leading-relaxed">
                 Çoktan seçmeli, Doğru/Yanlış, Metin Yanıtı, Slider, Puzzle/Sıralama ve Eşleştirme türleri.
               </p>
             </div>
 
             <div className="mt-4 flex flex-wrap gap-1.5">
-              {['Quiz', 'Doğru/Yanlış', 'Metin', 'Sıralama', 'Slider', 'Eşleştirme'].map((t, idx) => (
-                <span key={idx} className="px-2.5 py-1 rounded-lg bg-slate-800/80 border border-slate-700/60 text-[11px] font-semibold text-slate-300">
-                  {t}
+              {[
+                { name: 'Quiz', cls: 'bg-[#FEF3C7] text-[#D97706]' },
+                { name: 'Doğru/Yanlış', cls: 'bg-[#E8F5E9] text-[#2E7D32]' },
+                { name: 'Açık Uçlu', cls: 'bg-[#E0F2FE] text-[#0284C7]' },
+                { name: 'Sıralama', cls: 'bg-[#EDE9FE] text-[#6D28D9]' },
+                { name: 'Eşleştirme', cls: 'bg-[#FFE0EC] text-[#E83389]' },
+              ].map((t, idx) => (
+                <span key={idx} className={`px-2.5 py-1 rounded-full text-[11px] font-bold ${t.cls}`}>
+                  {t.name}
                 </span>
               ))}
             </div>
           </div>
 
-          {/* Bento Card 4: Gamification & Rewards (Span 2) */}
-          <div className="md:col-span-2 bento-card bento-card-interactive p-7 flex flex-col justify-between">
+          {/* Card 4: Gamification & Tabular Educational Data (DESIGN.md 228-231) */}
+          <div className="md:col-span-2 lumina-card p-7 flex flex-col justify-between">
             <div className="space-y-3">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 text-xs font-bold">
-                <Flame className="w-3.5 h-3.5 fill-amber-400" />
-                OYUNLAŞTIRMA & ÖDÜLLER
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FEF3C7] text-[#D97706] text-xs font-bold border border-[#D97706]/20">
+                <Flame className="w-3.5 h-3.5 fill-[#D97706]" />
+                OYUNLAŞTIRMA & ANALİTİK VERİLER
               </div>
-              <h3 className="text-2xl font-black text-white">
-                XP Seviyeleri, Rozetler & Liderlik Tablosu
+              <h3 className="text-2xl font-bold text-[#340C24]">
+                Doğruluk Oranı, Seri Rozetleri ve XP Liderlik Tablosu
               </h3>
-              <p className="text-xs text-slate-300 max-w-xl leading-relaxed">
-                Öğrenciler tamamladıkları quizlerle XP kazanır, seri (streak) bonuslarını katlar ve okul/sınıf sıralamasında zirveye yarışır.
+              <p className="text-xs text-[#594048] max-w-xl leading-relaxed">
+                Öğretmenler sınıf başarı eğrisini saniyeler içinde tarar; öğrenciler her doğru cevapla seri bonuslarını katlayarak rozet toplar.
               </p>
             </div>
 
-            <div className="mt-6 pt-4 border-t border-white/10 flex flex-wrap items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <div className="px-3.5 py-1.5 rounded-xl bg-amber-500/20 border border-amber-500/30 text-amber-300 text-xs font-bold flex items-center gap-1.5">
-                  <Flame className="w-4 h-4 fill-amber-400" />
+            {/* Modular Data Metric Containers (DESIGN.md 229) */}
+            <div className="mt-6 pt-5 border-t border-[#340C24]/[0.08] flex flex-wrap items-center justify-between gap-4">
+              <div className="flex flex-wrap items-center gap-3">
+                <div className="px-3.5 py-2 rounded-2xl bg-[#E8F5E9] text-[#2E7D32] text-xs font-bold border border-[#2E7D32]/20 flex items-center gap-2">
+                  <Target className="w-4 h-4 text-[#2E7D32]" />
+                  <span>Doğruluk: %88</span>
+                </div>
+                <div className="px-3.5 py-2 rounded-2xl bg-[#FEF3C7] text-[#D97706] text-xs font-bold border border-[#D97706]/20 flex items-center gap-2">
+                  <Flame className="w-4 h-4 fill-[#D97706]" />
                   <span>7 Günlük Seri 🔥</span>
                 </div>
-                <div className="px-3.5 py-1.5 rounded-xl bg-brand-500/20 border border-brand-500/30 text-brand-300 text-xs font-bold">
-                  <span>Level 4 • 2,450 XP ⚡</span>
+                <div className="px-3.5 py-2 rounded-2xl bg-[#EDE9FE] text-[#6D28D9] text-xs font-bold border border-[#6D28D9]/20 flex items-center gap-2">
+                  <Trophy className="w-4 h-4 text-[#6D28D9]" />
+                  <span>2,450 XP ⚡</span>
                 </div>
               </div>
 
               <Link
                 href="/study"
                 onClick={playClick}
-                className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs border border-slate-700 transition flex items-center gap-1.5"
+                className="btn-lumina-secondary px-4 py-2 text-xs flex items-center gap-1.5"
               >
                 <span>Solo Modları Keşfet</span>
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -311,20 +431,20 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 3. POPÜLER VE TREND QUİZLER */}
+      {/* 4. POPÜLER VE TREND QUİZLER */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-black text-white flex items-center gap-2 font-display">
-              <Flame className="w-6 h-6 text-amber-500 fill-amber-500" />
+            <h2 className="text-2xl font-bold text-[#340C24] flex items-center gap-2 font-display">
+              <Flame className="w-6 h-6 text-[#FF7A00] fill-[#FF7A00]" />
               <span>Trend & Popüler Quizler</span>
             </h2>
-            <p className="text-xs text-slate-400 mt-0.5">En çok oynanan ve öğretmenlerin önerdiği içerikler</p>
+            <p className="text-xs text-[#594048] mt-0.5">En çok oynanan ve öğretmenlerin önerdiği interaktif içerikler</p>
           </div>
           <Link
             href="/explore"
             onClick={playClick}
-            className="text-xs font-bold text-brand-400 hover:text-brand-300 flex items-center gap-1 transition"
+            className="text-xs font-bold text-[#E83389] hover:text-[#B40064] flex items-center gap-1 transition"
           >
             Tümünü Gör <ArrowRight className="w-3.5 h-3.5" />
           </Link>
@@ -333,7 +453,7 @@ export default function HomePage() {
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-64 rounded-3xl bg-slate-900/50 border border-slate-800 animate-pulse" />
+              <div key={i} className="h-64 rounded-3xl bg-white border border-[#340C24]/10 animate-pulse" />
             ))}
           </div>
         ) : (
@@ -341,44 +461,44 @@ export default function HomePage() {
             {quizzes.slice(0, 6).map((quiz) => (
               <div
                 key={quiz.id}
-                className="bento-card p-6 flex flex-col justify-between group"
+                className="lumina-card p-6 flex flex-col justify-between group"
               >
-                <div className="space-y-3.5">
+                <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full bg-brand-500/15 text-brand-300 border border-brand-500/30">
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-[#FFE0EC] text-[#E83389] border border-[#E83389]/20">
                       {quiz.subject?.name || 'Müfredat'}
                     </span>
-                    <div className="flex items-center gap-1 text-xs text-amber-400 font-bold bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">
+                    <div className="flex items-center gap-1 text-xs text-[#D97706] font-bold bg-[#FEF3C7] px-2 py-0.5 rounded-full border border-[#D97706]/20">
                       ⭐ {quiz.rating || 5.0}
                     </div>
                   </div>
 
-                  <h3 className="font-black text-white text-base group-hover:text-brand-300 transition line-clamp-2 leading-snug">
+                  <h3 className="font-bold text-[#340C24] text-base group-hover:text-[#E83389] transition line-clamp-2 leading-snug">
                     {quiz.title}
                   </h3>
 
-                  <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">
+                  <p className="text-xs text-[#594048] line-clamp-2 leading-relaxed">
                     {quiz.description || 'Müfredata uyumlu bilgi yarışması ve değerlendirme testi.'}
                   </p>
 
-                  <div className="flex items-center gap-3 text-xs text-slate-400 pt-1 font-medium">
+                  <div className="flex items-center gap-3 text-xs text-[#8C6F78] pt-1 font-medium">
                     <span className="flex items-center gap-1">
-                      <Clock className="w-3.5 h-3.5 text-slate-500" />
+                      <Clock className="w-3.5 h-3.5 text-[#8C6F78]" />
                       {quiz._count?.questions || quiz.questions?.length || 0} Soru
                     </span>
                     <span>•</span>
                     <span className="flex items-center gap-1">
-                      <Users className="w-3.5 h-3.5 text-slate-500" />
+                      <Users className="w-3.5 h-3.5 text-[#8C6F78]" />
                       {quiz.playCount || 0} Oynanma
                     </span>
                   </div>
                 </div>
 
-                <div className="pt-5 mt-4 border-t border-white/10 flex items-center justify-between gap-2.5">
+                <div className="pt-5 mt-4 border-t border-[#340C24]/[0.08] flex items-center justify-between gap-2.5">
                   <Link
                     href={`/solo/${quiz.id}`}
                     onClick={playClick}
-                    className="flex-1 py-2.5 text-center text-xs font-bold rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 transition border border-slate-700/80"
+                    className="flex-1 py-2.5 text-center text-xs font-bold rounded-full bg-[#F5F1E6] hover:bg-[#FFE0EC] text-[#340C24] transition border border-[#340C24]/10"
                   >
                     Bireysel Oyna
                   </Link>
@@ -396,7 +516,7 @@ export default function HomePage() {
                         router.push(`/live/host/${data.pin}`);
                       }
                     }}
-                    className="flex-1 py-2.5 text-center text-xs font-black rounded-xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white shadow-tactile-brand btn-tactile transition flex items-center justify-center gap-1.5"
+                    className="flex-1 py-2.5 text-center text-xs font-bold btn-lumina-cta flex items-center justify-center gap-1.5"
                   >
                     <Play className="w-3.5 h-3.5 fill-white" />
                     Canlı Başlat
@@ -408,57 +528,23 @@ export default function HomePage() {
         )}
       </section>
 
-      {/* 4. DERSLER & KATEGORİLER */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
-        <div>
-          <h2 className="text-2xl font-black text-white flex items-center gap-2 font-display">
-            <BookOpen className="w-6 h-6 text-brand-400" />
-            <span>Müfredat Dersleri</span>
-          </h2>
-          <p className="text-xs text-slate-400 mt-0.5">Sınıf düzeyine ve derslere göre filtrelenmiş içerikler</p>
-        </div>
-
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5">
-          {[
-            { name: 'Türk Dili ve Edebiyatı', icon: '📖', color: 'from-blue-600/25 to-indigo-900/30', border: 'border-blue-500/30' },
-            { name: 'Matematik', icon: '📐', color: 'from-emerald-600/25 to-teal-900/30', border: 'border-emerald-500/30' },
-            { name: 'Fizik & Fen', icon: '⚡', color: 'from-amber-600/25 to-orange-900/30', border: 'border-amber-500/30' },
-            { name: 'Kimya & Biyoloji', icon: '🧬', color: 'from-pink-600/25 to-rose-900/30', border: 'border-pink-500/30' },
-            { name: 'Tarih & Coğrafya', icon: '🌍', color: 'from-purple-600/25 to-violet-900/30', border: 'border-purple-500/30' },
-            { name: 'Bilişim & Kodlama', icon: '💻', color: 'from-cyan-600/25 to-blue-900/30', border: 'border-cyan-500/30' },
-          ].map((subj, idx) => (
-            <Link
-              key={idx}
-              href={`/explore?subject=${encodeURIComponent(subj.name)}`}
-              onClick={playClick}
-              className={`p-4 rounded-2xl bg-gradient-to-b ${subj.color} border ${subj.border} hover:scale-105 transition-all text-center space-y-2 group shadow-lg backdrop-blur-md`}
-            >
-              <div className="text-3xl group-hover:scale-125 transition transform duration-300">{subj.icon}</div>
-              <div className="font-bold text-xs text-slate-200 group-hover:text-white transition">
-                {subj.name}
-              </div>
-            </Link>
-          ))}
-        </div>
-      </section>
-
       {/* 5. AI GENERATOR MODAL */}
       {aiModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="w-full max-w-lg bg-slate-900 border border-slate-700 rounded-3xl p-6 shadow-2xl space-y-6">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#340C24]/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="w-full max-w-lg bg-white border border-[#E83389]/25 rounded-3xl p-6 shadow-lumina-level2 space-y-6">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-xl bg-brand-600 flex items-center justify-center">
-                  <BrainCircuit className="w-4 h-4 text-white" />
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-[#FF7A00] to-[#E83389] flex items-center justify-center shadow-md">
+                  <BrainCircuit className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-black text-white text-lg">AI Quiz Üreticisi</h3>
-                  <p className="text-xs text-slate-400">Konu girin, yapay zekâ müfredata uygun sorular hazırlasın</p>
+                  <h3 className="font-bold text-[#340C24] text-lg">AI Quiz Sihirbazı</h3>
+                  <p className="text-xs text-[#594048]">Konu girin, yapay zekâ müfredata uygun sorular hazırlasın</p>
                 </div>
               </div>
               <button
                 onClick={() => setAiModalOpen(false)}
-                className="text-slate-400 hover:text-white p-1 rounded-lg"
+                className="text-[#8C6F78] hover:text-[#340C24] p-1 rounded-lg"
               >
                 ✕
               </button>
@@ -466,7 +552,7 @@ export default function HomePage() {
 
             <div className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">
+                <label className="block text-xs font-bold text-[#340C24] mb-1">
                   Ders / Konu Başlığı
                 </label>
                 <input
@@ -474,18 +560,18 @@ export default function HomePage() {
                   placeholder="Örn: 10. Sınıf Hikâyenin Yapı Unsurları veya Fizik Basınç..."
                   value={aiTopic}
                   onChange={(e) => setAiTopic(e.target.value)}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500"
+                  className="w-full bg-[#FDFBF7] border border-[#340C24]/12 rounded-xl px-4 py-2.5 text-sm text-[#340C24] focus:outline-none focus:border-[#E83389] focus:ring-2 focus:ring-[#E83389]/15"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">
+                <label className="block text-xs font-bold text-[#340C24] mb-1">
                   Sınıf Seviyesi
                 </label>
                 <select
                   value={aiGrade}
                   onChange={(e) => setAiGrade(e.target.value)}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500"
+                  className="w-full bg-[#FDFBF7] border border-[#340C24]/12 rounded-xl px-4 py-2.5 text-sm text-[#340C24] focus:outline-none focus:border-[#E83389]"
                 >
                   <option value="9">9. Sınıf</option>
                   <option value="10">10. Sınıf</option>
@@ -495,8 +581,8 @@ export default function HomePage() {
                 </select>
               </div>
 
-              <div className="p-3 bg-brand-950/40 border border-brand-800/40 rounded-xl text-xs text-brand-300 flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-brand-400 shrink-0" />
+              <div className="p-3 bg-[#FFE0EC]/60 border border-[#E83389]/25 rounded-2xl text-xs text-[#B40064] flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-[#E83389] shrink-0" />
                 <span>MEB kazanımlarına uygun, cevap açıklamaları ve çeldiricilerle birlikte üretilir.</span>
               </div>
             </div>
@@ -504,14 +590,14 @@ export default function HomePage() {
             <div className="flex items-center justify-end gap-3 pt-2">
               <button
                 onClick={() => setAiModalOpen(false)}
-                className="px-4 py-2 text-xs font-semibold rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition"
+                className="px-4 py-2 text-xs font-bold rounded-full bg-[#F5F1E6] hover:bg-[#FFE0EC] text-[#340C24] transition"
               >
                 İptal
               </button>
               <button
                 disabled={aiLoading || !aiTopic.trim()}
                 onClick={handleQuickAiGenerate}
-                className="px-5 py-2.5 text-xs font-bold rounded-xl bg-brand-600 hover:bg-brand-500 disabled:opacity-50 text-white shadow-lg shadow-brand-600/30 transition flex items-center gap-2"
+                className="btn-lumina-cta px-5 py-2.5 text-xs flex items-center gap-2 disabled:opacity-50"
               >
                 {aiLoading ? (
                   <>

@@ -17,12 +17,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="tr" className="dark">
+    <html lang="tr">
       <head>
-        <meta name="theme-color" content="#7c3aed" />
+        <meta name="theme-color" content="#E83389" />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
       </head>
-      <body className="min-h-screen flex flex-col bg-[#090d16] text-slate-100 antialiased selection:bg-brand-500 selection:text-white">
+      <body className="min-h-screen flex flex-col bg-[#FDFBF7] text-[#340C24] font-sans antialiased selection:bg-[#E83389] selection:text-white">
         <AuthProvider>
           <SoundProvider>
             <Navbar />

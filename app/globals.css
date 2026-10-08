@@ -1,35 +1,38 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --background: #090d16;
-  --foreground: #f8fafc;
+  --background: #FDFBF7;
+  --foreground: #340C24;
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
+  font-family: 'DM Sans', system-ui, sans-serif;
   font-feature-settings: "rlig" 1, "calt" 1;
 }
 
-/* Custom modern scrollbars */
+/* Warm, gentle scrollbars */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #0f172a;
+  background: #F5F1E6;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #334155;
+  background: #E0BEC7;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #64748b;
+  background: #8C6F78;
 }
 
 /* Floating animation for reactions */
@@ -67,52 +70,114 @@ body {
 }
 
 /* ----------------------------------------------------
-   EduPulse Cosmic Aurora & Bento Design System
+   Wayground Lumina Design System (Stitch)
 ---------------------------------------------------- */
 
-.bg-aurora-mesh {
-  background-color: #080c15;
-  background-image: 
-    radial-gradient(at 10% 0%, rgba(124, 58, 237, 0.20) 0px, transparent 50%),
-    radial-gradient(at 90% 10%, rgba(6, 182, 212, 0.16) 0px, transparent 50%),
-    radial-gradient(at 50% 60%, rgba(79, 70, 229, 0.10) 0px, transparent 50%),
-    radial-gradient(at 100% 100%, rgba(245, 158, 11, 0.08) 0px, transparent 50%),
-    radial-gradient(at 0% 100%, rgba(16, 185, 129, 0.08) 0px, transparent 50%);
+/* Warm Canvas Foundations with Soft Neomorphic Daylight Glow */
+.bg-lumina-canvas {
+  background-color: #FDFBF7;
+  background-image:
+    radial-gradient(at 15% 5%, rgba(255, 122, 0, 0.08) 0px, transparent 40%),
+    radial-gradient(at 85% 8%, rgba(232, 51, 137, 0.09) 0px, transparent 45%),
+    radial-gradient(at 50% 50%, rgba(113, 42, 226, 0.05) 0px, transparent 50%),
+    radial-gradient(at 90% 90%, rgba(255, 122, 0, 0.05) 0px, transparent 40%),
+    radial-gradient(at 10% 95%, rgba(232, 51, 137, 0.06) 0px, transparent 40%);
 }
 
-.bg-dot-grid {
-  background-image: radial-gradient(rgba(255, 255, 255, 0.09) 1px, transparent 1px);
-  background-size: 24px 24px;
+.bg-lumina-dots {
+  background-image: radial-gradient(rgba(52, 12, 36, 0.06) 1px, transparent 1px);
+  background-size: 20px 20px;
 }
 
+/* Structural Level 1 Cards */
+.lumina-card {
+  background: #FFFFFF;
+  border: 1px solid rgba(52, 12, 36, 0.08);
+  border-radius: 1rem;
+  box-shadow: 0 2px 8px rgba(52, 12, 36, 0.04), 0 8px 24px rgba(232, 51, 137, 0.04);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.lumina-card:hover {
+  border-color: rgba(232, 51, 137, 0.25);
+  box-shadow: 0 12px 32px rgba(52, 12, 36, 0.08), 0 2px 8px rgba(255, 122, 0, 0.06);
+  transform: translateY(-2px);
+}
+
+/* Level 2 Floating Sheet / Modal */
+.lumina-level2 {
+  background: #FFFFFF;
+  border: 1px solid rgba(232, 51, 137, 0.2);
+  box-shadow: 0 12px 32px rgba(52, 12, 36, 0.08), 0 2px 8px rgba(255, 122, 0, 0.06);
+}
+
+/* Primary Gradient CTA Button: 45deg Coral to Magenta Pill */
+.btn-lumina-cta {
+  background: linear-gradient(135deg, #FF7A00 0%, #E83389 100%);
+  color: #FFFFFF;
+  border-radius: 9999px;
+  font-weight: 700;
+  box-shadow: 0 8px 24px -4px rgba(232, 51, 137, 0.4);
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-lumina-cta:hover {
+  filter: brightness(1.05);
+  transform: translateY(-1px);
+  box-shadow: 0 12px 28px -4px rgba(232, 51, 137, 0.5);
+}
+
+.btn-lumina-cta:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 8px rgba(232, 51, 137, 0.3);
+}
+
+/* Secondary Outlined Button */
+.btn-lumina-secondary {
+  background: #FFFFFF;
+  border: 1.5px solid #E83389;
+  color: #E83389;
+  border-radius: 9999px;
+  font-weight: 700;
+  transition: all 0.15s ease-in-out;
+}
+
+.btn-lumina-secondary:hover {
+  background: #FFF0F4;
+}
+
+/* Floating Co-Presence Educator / Student Cursor Pills */
+.copresence-cursor {
+  position: absolute;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #340C24;
+  color: #FFFFFF;
+  border: 1.5px solid #E83389;
+  box-shadow: 0 4px 16px rgba(52, 12, 36, 0.25);
+  border-radius: 9999px;
+  padding: 4px 12px;
+  font-size: 11px;
+  font-weight: 700;
+  pointer-events: none;
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Backward-compatibility classes mapped to Wayground Lumina */
 .bento-card {
-  background: rgba(15, 23, 42, 0.70);
-  border: 1px solid rgba(255, 255, 255, 0.09);
-  backdrop-filter: blur(20px);
-  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.4);
-  border-radius: 1.5rem;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  background: #FFFFFF;
+  border: 1px solid rgba(52, 12, 36, 0.08);
+  border-radius: 1.25rem;
+  box-shadow: 0 2px 8px rgba(52, 12, 36, 0.04), 0 8px 24px rgba(232, 51, 137, 0.04);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .bento-card:hover {
-  border-color: rgba(139, 92, 246, 0.45);
-  transform: translateY(-4px);
-  box-shadow: 0 20px 45px -10px rgba(124, 58, 237, 0.22);
-}
-
-.bento-card-interactive {
-  position: relative;
-  overflow: hidden;
-}
-
-.bento-card-interactive::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  border-color: rgba(232, 51, 137, 0.25);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(52, 12, 36, 0.08), 0 2px 8px rgba(255, 122, 0, 0.06);
 }
 
 .btn-tactile {
@@ -121,11 +186,10 @@ body {
 }
 
 .btn-tactile:hover {
-  filter: brightness(1.08);
+  filter: brightness(1.05);
 }
 
 .btn-tactile:active {
-  transform: translateY(3px);
+  transform: translateY(2px);
   box-shadow: none !important;
 }
-
