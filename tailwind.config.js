@@ -47,6 +47,17 @@ module.exports = {
         'pulse-glow': 'pulseGlow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
         'float': 'float 3s ease-in-out infinite',
       },
+      boxShadow: {
+        'tactile-brand': '0 4px 0 #5b21b6',
+        'tactile-brand-lg': '0 6px 0 #4c1d95',
+        'tactile-cyan': '0 4px 0 #0891b2',
+        'tactile-amber': '0 4px 0 #d97706',
+        'tactile-emerald': '0 4px 0 #059669',
+        'glow-brand': '0 0 30px -5px rgba(124, 58, 237, 0.45)',
+        'glow-cyan': '0 0 30px -5px rgba(6, 182, 212, 0.45)',
+        'glow-amber': '0 0 30px -5px rgba(245, 158, 11, 0.45)',
+        'glass-card': '0 8px 32px 0 rgba(0, 0, 0, 0.35)',
+      },
       keyframes: {
         bounceSubtle: {
           '0%, 100%': { transform: 'translateY(-3%)' },

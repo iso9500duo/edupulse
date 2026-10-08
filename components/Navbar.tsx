@@ -32,30 +32,30 @@ export default function Navbar() {
   const [demoMenuOpen, setDemoMenuOpen] = useState(false);
 
   return (
-    <nav className="sticky top-0 z-50 bg-[#0b0f19]/90 backdrop-blur-md border-b border-slate-800">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <header className="sticky top-2 sm:top-3 z-50 px-2 sm:px-6 max-w-7xl mx-auto transition-all">
+      <nav className="rounded-2xl sm:rounded-3xl bg-slate-900/80 backdrop-blur-2xl border border-white/10 shadow-2xl shadow-black/40 px-3 sm:px-5">
         <div className="flex items-center justify-between h-16">
           {/* Logo & Brand */}
-          <div className="flex items-center space-x-6">
+          <div className="flex items-center space-x-5">
             <Link
               href="/"
               onClick={playClick}
-              className="flex items-center space-x-2 text-xl font-black tracking-tight"
+              className="flex items-center space-x-2.5 text-xl font-black tracking-tight group"
             >
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 via-indigo-500 to-accent-cyan flex items-center justify-center shadow-lg shadow-brand-500/30">
+              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-brand-600 via-indigo-500 to-accent-cyan flex items-center justify-center shadow-lg shadow-brand-500/30 group-hover:scale-105 group-hover:shadow-brand-500/50 transition transform">
                 <Zap className="w-5 h-5 text-white animate-pulse" />
               </div>
-              <span className="bg-gradient-to-r from-white via-indigo-200 to-brand-300 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-white via-indigo-100 to-brand-300 bg-clip-text text-transparent font-display">
                 Edu<span className="text-brand-400">Pulse</span>
               </span>
             </Link>
 
             {/* Desktop Navigation */}
-            <div className="hidden lg:flex items-center space-x-1 text-sm font-medium text-slate-300">
+            <div className="hidden lg:flex items-center space-x-1 text-xs font-bold text-slate-300">
               <Link
                 href="/explore"
                 onClick={playClick}
-                className="px-3 py-2 rounded-lg hover:text-white hover:bg-slate-800/60 transition flex items-center gap-1.5"
+                className="px-3 py-2 rounded-xl hover:text-white hover:bg-white/5 transition flex items-center gap-1.5"
               >
                 <Compass className="w-4 h-4 text-accent-cyan" />
                 Keşfet
@@ -63,7 +63,7 @@ export default function Navbar() {
               <Link
                 href="/courses"
                 onClick={playClick}
-                className="px-3 py-2 rounded-lg hover:text-white hover:bg-slate-800/60 transition flex items-center gap-1.5"
+                className="px-3 py-2 rounded-xl hover:text-white hover:bg-white/5 transition flex items-center gap-1.5"
               >
                 <BookOpen className="w-4 h-4 text-emerald-400" />
                 Kurslar
@@ -71,7 +71,7 @@ export default function Navbar() {
               <Link
                 href="/study"
                 onClick={playClick}
-                className="px-3 py-2 rounded-lg hover:text-white hover:bg-slate-800/60 transition flex items-center gap-1.5"
+                className="px-3 py-2 rounded-xl hover:text-white hover:bg-white/5 transition flex items-center gap-1.5"
               >
                 <GraduationCap className="w-4 h-4 text-accent-amber" />
                 Solo Çalış
@@ -79,7 +79,7 @@ export default function Navbar() {
               <Link
                 href="/question-bank"
                 onClick={playClick}
-                className="px-3 py-2 rounded-lg hover:text-white hover:bg-slate-800/60 transition flex items-center gap-1.5"
+                className="px-3 py-2 rounded-xl hover:text-white hover:bg-white/5 transition flex items-center gap-1.5"
               >
                 <Layers className="w-4 h-4 text-purple-400" />
                 Soru Bankası
@@ -87,26 +87,26 @@ export default function Navbar() {
               <Link
                 href="/classes"
                 onClick={playClick}
-                className="px-3 py-2 rounded-lg hover:text-white hover:bg-slate-800/60 transition flex items-center gap-1.5"
+                className="px-3 py-2 rounded-xl hover:text-white hover:bg-white/5 transition flex items-center gap-1.5"
               >
                 <Gamepad2 className="w-4 h-4 text-blue-400" />
                 Sınıflar & Ödev
               </Link>
               <Link
-                href="/marketplace"
-                onClick={playClick}
-                className="px-3 py-2 rounded-lg hover:text-white hover:bg-slate-800/60 transition flex items-center gap-1.5"
-              >
-                <ShoppingBag className="w-4 h-4 text-pink-400" />
-                Mağaza
-              </Link>
-              <Link
                 href="/premium"
                 onClick={playClick}
-                className="px-3 py-2 rounded-lg hover:text-white hover:bg-amber-500/10 text-amber-300 transition flex items-center gap-1.5"
+                className="px-3 py-2 rounded-xl hover:text-white bg-amber-500/10 text-amber-300 border border-amber-500/20 transition flex items-center gap-1.5"
               >
                 <Crown className="w-4 h-4 text-amber-400" />
                 Premium
+              </Link>
+              <Link
+                href="/marketplace"
+                onClick={playClick}
+                className="px-3 py-2 rounded-xl hover:text-white hover:bg-white/5 transition flex items-center gap-1.5"
+              >
+                <ShoppingBag className="w-4 h-4 text-pink-400" />
+                Mağaza
               </Link>
             </div>
           </div>
@@ -172,14 +172,24 @@ export default function Navbar() {
               )}
             </div>
 
-            {/* Create Quiz Shortcut */}
+            {/* Quick PIN Join Shortcut */}
+            <Link
+              href="/join"
+              onClick={playClick}
+              className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-800/90 hover:bg-slate-700/90 text-white border border-slate-700/80 transition"
+            >
+              <Zap className="w-3.5 h-3.5 text-accent-cyan" />
+              <span>PIN Gir</span>
+            </Link>
+
+            {/* Create Quiz Shortcut with 3D tactile button */}
             <Link
               href="/creator"
               onClick={playClick}
-              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-brand-600 hover:bg-brand-500 text-white shadow-md shadow-brand-600/30 transition"
+              className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-black bg-gradient-to-r from-brand-600 to-indigo-600 text-white shadow-tactile-brand btn-tactile transition"
             >
               <PlusCircle className="w-3.5 h-3.5" />
-              Quiz Oluştur
+              <span>Quiz Oluştur</span>
             </Link>
 
             {/* User Profile or Login */}
@@ -249,7 +259,6 @@ export default function Navbar() {
             </button>
           </div>
         </div>
-      </div>
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
@@ -320,5 +329,6 @@ export default function Navbar() {
         </div>
       )}
     </nav>
+  </header>
   );
 }

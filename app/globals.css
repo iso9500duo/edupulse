@@ -65,3 +65,67 @@ body {
 .rotate-y-180 {
   transform: rotateY(180deg);
 }
+
+/* ----------------------------------------------------
+   EduPulse Cosmic Aurora & Bento Design System
+---------------------------------------------------- */
+
+.bg-aurora-mesh {
+  background-color: #080c15;
+  background-image: 
+    radial-gradient(at 10% 0%, rgba(124, 58, 237, 0.20) 0px, transparent 50%),
+    radial-gradient(at 90% 10%, rgba(6, 182, 212, 0.16) 0px, transparent 50%),
+    radial-gradient(at 50% 60%, rgba(79, 70, 229, 0.10) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(245, 158, 11, 0.08) 0px, transparent 50%),
+    radial-gradient(at 0% 100%, rgba(16, 185, 129, 0.08) 0px, transparent 50%);
+}
+
+.bg-dot-grid {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.09) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.bento-card {
+  background: rgba(15, 23, 42, 0.70);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.4);
+  border-radius: 1.5rem;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.bento-card:hover {
+  border-color: rgba(139, 92, 246, 0.45);
+  transform: translateY(-4px);
+  box-shadow: 0 20px 45px -10px rgba(124, 58, 237, 0.22);
+}
+
+.bento-card-interactive {
+  position: relative;
+  overflow: hidden;
+}
+
+.bento-card-interactive::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+}
+
+.btn-tactile {
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateY(0);
+}
+
+.btn-tactile:hover {
+  filter: brightness(1.08);
+}
+
+.btn-tactile:active {
+  transform: translateY(3px);
+  box-shadow: none !important;
+}
+

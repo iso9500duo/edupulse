@@ -78,30 +78,30 @@ function ExploreContent() {
         </div>
 
         {/* Search Bar */}
-        <form onSubmit={handleSearchSubmit} className="flex gap-2">
+        <form onSubmit={handleSearchSubmit} className="flex gap-2.5">
           <div className="relative flex-1">
-            <Search className="w-5 h-5 absolute left-3.5 top-3.5 text-slate-400" />
+            <Search className="w-5 h-5 absolute left-4 top-3.5 text-slate-400" />
             <input
               type="text"
               placeholder="Quiz adı, konu, ders, öğretmen veya etiket ara..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-11 pr-4 py-3 bg-slate-900 border border-slate-700 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:border-brand-500"
+              className="w-full pl-12 pr-4 py-3.5 bg-slate-900/90 border border-slate-700/80 rounded-2xl text-white placeholder-slate-400 focus:outline-none focus:border-brand-400 focus:ring-2 focus:ring-brand-500/20 shadow-inner text-sm transition"
             />
           </div>
           <button
             type="submit"
             onClick={playClick}
-            className="px-6 py-3 bg-brand-600 hover:bg-brand-500 text-white font-bold rounded-xl shadow-lg transition"
+            className="px-7 py-3.5 bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white font-black text-sm rounded-2xl shadow-tactile-brand btn-tactile transition"
           >
             Ara
           </button>
         </form>
       </div>
 
-      {/* Filter Bar */}
-      <div className="flex flex-wrap items-center gap-3 p-4 bg-slate-900/80 rounded-2xl border border-slate-800 text-xs">
-        <div className="flex items-center gap-1.5 text-slate-400 font-semibold mr-2">
+      {/* Filter Bar with Bento Glass styling */}
+      <div className="flex flex-wrap items-center gap-3 p-4 bg-slate-900/80 backdrop-blur-xl rounded-2xl border border-white/10 text-xs shadow-lg">
+        <div className="flex items-center gap-1.5 text-slate-300 font-bold mr-2">
           <Filter className="w-4 h-4 text-brand-400" />
           Filtrele:
         </div>
@@ -110,7 +110,7 @@ function ExploreContent() {
         <select
           value={selectedSubject}
           onChange={(e) => setSelectedSubject(e.target.value)}
-          className="bg-slate-800 border border-slate-700 text-slate-200 rounded-lg px-3 py-1.5 focus:outline-none"
+          className="bg-slate-800/90 border border-slate-700 text-slate-200 rounded-xl px-3 py-2 focus:outline-none focus:border-brand-500 font-semibold"
         >
           <option value="ALL">Tüm Dersler</option>
           <option value="Türk Dili ve Edebiyatı">Türk Dili ve Edebiyatı</option>
@@ -126,7 +126,7 @@ function ExploreContent() {
         <select
           value={selectedGrade}
           onChange={(e) => setSelectedGrade(e.target.value)}
-          className="bg-slate-800 border border-slate-700 text-slate-200 rounded-lg px-3 py-1.5 focus:outline-none"
+          className="bg-slate-800/90 border border-slate-700 text-slate-200 rounded-xl px-3 py-2 focus:outline-none focus:border-brand-500 font-semibold"
         >
           <option value="ALL">Tüm Sınıflar</option>
           <option value="9">9. Sınıf</option>
@@ -139,7 +139,7 @@ function ExploreContent() {
         <select
           value={selectedDifficulty}
           onChange={(e) => setSelectedDifficulty(e.target.value)}
-          className="bg-slate-800 border border-slate-700 text-slate-200 rounded-lg px-3 py-1.5 focus:outline-none"
+          className="bg-slate-800/90 border border-slate-700 text-slate-200 rounded-xl px-3 py-2 focus:outline-none focus:border-brand-500 font-semibold"
         >
           <option value="ALL">Tüm Zorluklar</option>
           <option value="EASY">Kolay</option>
@@ -151,10 +151,10 @@ function ExploreContent() {
         <button
           type="button"
           onClick={() => setOnlyPremium(!onlyPremium)}
-          className={`px-3 py-1.5 rounded-lg border flex items-center gap-1.5 transition ${
+          className={`px-3 py-2 rounded-xl border flex items-center gap-1.5 transition font-bold ${
             onlyPremium
               ? 'bg-amber-500/20 text-amber-300 border-amber-500/50'
-              : 'bg-slate-800 text-slate-400 border-slate-700 hover:text-white'
+              : 'bg-slate-800/90 text-slate-400 border-slate-700 hover:text-white'
           }`}
         >
           <Crown className="w-3.5 h-3.5 text-amber-400" />
@@ -170,22 +170,22 @@ function ExploreContent() {
               setSelectedDifficulty('ALL');
               setOnlyPremium(false);
             }}
-            className="text-slate-400 hover:text-rose-400 ml-auto"
+            className="text-slate-400 hover:text-rose-400 ml-auto font-bold transition"
           >
-            Filtreleri Temizle
+            Filtreleri Temizle ✕
           </button>
         )}
       </div>
 
-      {/* Quizzes Grid */}
+      {/* Quizzes Grid with Bento Cards */}
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {[1, 2, 3, 4, 5, 6].map((i) => (
-            <div key={i} className="h-64 rounded-2xl bg-slate-900/50 border border-slate-800 animate-pulse" />
+            <div key={i} className="h-64 rounded-3xl bg-slate-900/50 border border-slate-800 animate-pulse" />
           ))}
         </div>
       ) : quizzes.length === 0 ? (
-        <div className="p-12 text-center rounded-2xl bg-slate-900/50 border border-slate-800 space-y-3">
+        <div className="p-12 text-center rounded-3xl bg-slate-900/50 border border-slate-800 space-y-3">
           <BookOpen className="w-10 h-10 text-slate-500 mx-auto" />
           <h3 className="text-lg font-bold text-white">Aradığınız kriterlere uygun quiz bulunamadı</h3>
           <p className="text-xs text-slate-400">Filtreleri değiştirmeyi deneyebilir veya kendi quizinizi oluşturabilirsiniz.</p>
@@ -197,12 +197,12 @@ function ExploreContent() {
             return (
               <div
                 key={quiz.id}
-                className="group rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-brand-500/50 transition-all p-5 flex flex-col justify-between shadow-lg relative"
+                className="bento-card p-6 flex flex-col justify-between relative group"
               >
                 {/* Favorite Icon */}
                 <button
                   onClick={() => toggleFavorite(quiz.id)}
-                  className="absolute top-4 right-4 p-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-400 transition"
+                  className="absolute top-5 right-5 p-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-400 transition"
                   title="Favorilere Ekle"
                 >
                   <Heart
@@ -210,19 +210,19 @@ function ExploreContent() {
                   />
                 </button>
 
-                <div className="space-y-3 pr-8">
+                <div className="space-y-3.5 pr-8">
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-brand-500/10 text-brand-300 border border-brand-500/20">
-                      {quiz.subject?.name || 'Genel'}
+                    <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full bg-brand-500/15 text-brand-300 border border-brand-500/30">
+                      {quiz.subject?.name || 'Müfredat'}
                     </span>
                     {quiz.isPremium && (
-                      <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-300 border border-amber-500/20 flex items-center gap-1">
-                        <Crown className="w-2.5 h-2.5" /> PRO
+                      <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30 flex items-center gap-1">
+                        <Crown className="w-3 h-3" /> PRO
                       </span>
                     )}
                   </div>
 
-                  <h3 className="font-bold text-white text-base group-hover:text-brand-300 transition line-clamp-2">
+                  <h3 className="font-black text-white text-base group-hover:text-brand-300 transition line-clamp-2 leading-snug">
                     {quiz.title}
                   </h3>
 
@@ -230,7 +230,7 @@ function ExploreContent() {
                     {quiz.description || 'MEB müfredatına uygun interaktif değerlendirme quizi.'}
                   </p>
 
-                  <div className="flex items-center gap-3 text-xs text-slate-400 pt-1">
+                  <div className="flex items-center gap-3 text-xs text-slate-400 pt-1 font-medium">
                     <span className="flex items-center gap-1">
                       <Clock className="w-3.5 h-3.5 text-slate-500" />
                       {quiz._count?.questions || 0} Soru
@@ -245,11 +245,11 @@ function ExploreContent() {
                   </div>
                 </div>
 
-                <div className="pt-5 mt-4 border-t border-slate-800/80 flex items-center justify-between gap-2">
+                <div className="pt-5 mt-4 border-t border-white/10 flex items-center justify-between gap-2.5">
                   <Link
                     href={`/solo/${quiz.id}`}
                     onClick={playClick}
-                    className="flex-1 py-2 text-center text-xs font-semibold rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 transition"
+                    className="flex-1 py-2.5 text-center text-xs font-bold rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 transition border border-slate-700/80"
                   >
                     Bireysel Oyna
                   </Link>
@@ -267,9 +267,9 @@ function ExploreContent() {
                         router.push(`/live/host/${data.pin}`);
                       }
                     }}
-                    className="flex-1 py-2 text-center text-xs font-bold rounded-lg bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white shadow-md shadow-brand-600/30 transition flex items-center justify-center gap-1"
+                    className="flex-1 py-2.5 text-center text-xs font-black rounded-xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white shadow-tactile-brand btn-tactile transition flex items-center justify-center gap-1.5"
                   >
-                    <Play className="w-3 h-3 fill-white" />
+                    <Play className="w-3.5 h-3.5 fill-white" />
                     Canlı Başlat
                   </button>
                 </div>
