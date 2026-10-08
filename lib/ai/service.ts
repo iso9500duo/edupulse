@@ -1,4 +1,4 @@
-// Pluggable AI Service Layer with fallback curriculum engine
+// Pluggable AI Service Layer with EVREN LLM (SSYZ) & Fallback Curriculum Engine
 export interface GenerateQuizRequest {
   topic: string;
   gradeLevel?: number;
@@ -37,35 +37,57 @@ export class AIService {
 
   /**
    * Generates a complete quiz from topic, prompt, or source text
+   * Priority: 1. EVREN LLM (Milli Altyapı) -> 2. Gemini -> 3. OpenAI -> 4. Pedagojik Müfredat Motoru
    */
   static async generateQuiz(params: GenerateQuizRequest): Promise<GeneratedQuizResponse> {
+    const evrenKey =
+      process.env.EVREN_API_KEY ||
+      (process.env.OPENAI_API_KEY?.startsWith('evren_') ? process.env.OPENAI_API_KEY : undefined);
     const geminiKey = process.env.GEMINI_API_KEY;
-    const openAiKey = process.env.OPENAI_API_KEY;
+    const openAiKey = process.env.OPENAI_API_KEY && !process.env.OPENAI_API_KEY.startsWith('evren_') ? process.env.OPENAI_API_KEY : undefined;
 
+    // 1. Try EVREN LLM (Savunma Sanayii Yapay Zeka Platformu)
+    if (evrenKey) {
+      try {
+        console.log('[AIService] EVREN LLM ile quiz üretiliyor...');
+        return await this.callEvrenAPI(params, evrenKey);
+      } catch (err: any) {
+        console.warn('[AIService] EVREN LLM çağrısı başarısız, alternatif sağlayıcı deneniyor:', err.message);
+      }
+    }
+
+    // 2. Try Gemini API
     if (geminiKey) {
       try {
+        console.log('[AIService] Gemini API ile quiz üretiliyor...');
         return await this.callGeminiAPI(params, geminiKey);
-      } catch (err) {
-        console.warn('Gemini API çağrısı başarısız oldu, akıllı müfredat motoru devreye giriyor:', err);
+      } catch (err: any) {
+        console.warn('[AIService] Gemini API çağrısı başarısız, alternatif sağlayıcı deneniyor:', err.message);
       }
     }
 
+    // 3. Try OpenAI API
     if (openAiKey) {
       try {
+        console.log('[AIService] OpenAI API ile quiz üretiliyor...');
         return await this.callOpenAI(params, openAiKey);
-      } catch (err) {
-        console.warn('OpenAI API çağrısı başarısız oldu, akıllı müfredat motoru devreye giriyor:', err);
+      } catch (err: any) {
+        console.warn('[AIService] OpenAI API çağrısı başarısız, akıllı müfredat motoru devreye giriyor:', err.message);
       }
     }
 
-    // Intelligent Curriculum Generation Engine
+    // 4. Intelligent Curriculum Generation Engine Fallback
+    console.log('[AIService] Yerel Pedagojik Müfredat Motoru ile quiz üretiliyor...');
     return this.generateFromCurriculumEngine(params);
   }
 
   /**
-   * Adjusts difficulty: 'MAKE_HARDER' | 'MAKE_EASIER' | 'SIMPLIFY_GRADE_5'
+   * Adjusts difficulty: 'MAKE_HARDER' | 'MAKE_EASIER' | 'IMPROVE_DISTRACTORS'
    */
-  static async transformQuestions(questions: GeneratedQuestion[], action: 'MAKE_HARDER' | 'MAKE_EASIER' | 'IMPROVE_DISTRACTORS'): Promise<GeneratedQuestion[]> {
+  static async transformQuestions(
+    questions: GeneratedQuestion[],
+    action: 'MAKE_HARDER' | 'MAKE_EASIER' | 'IMPROVE_DISTRACTORS'
+  ): Promise<GeneratedQuestion[]> {
     return questions.map((q) => {
       if (action === 'MAKE_HARDER') {
         return {
@@ -88,7 +110,7 @@ export class AIService {
       if (action === 'IMPROVE_DISTRACTORS') {
         return {
           ...q,
-          options: q.options.map((opt, i) => ({
+          options: q.options.map((opt) => ({
             ...opt,
             text: opt.isCorrect ? opt.text : `${opt.text} (Çeldirici Alternatif)`,
           })),
@@ -102,6 +124,51 @@ export class AIService {
    * Generates Flashcards from topic or text
    */
   static async generateFlashcards(topic: string, count = 5): Promise<{ front: string; back: string }[]> {
+    const evrenKey =
+      process.env.EVREN_API_KEY ||
+      (process.env.OPENAI_API_KEY?.startsWith('evren_') ? process.env.OPENAI_API_KEY : undefined);
+
+    if (evrenKey) {
+      try {
+        const baseUrl = process.env.EVREN_API_BASE_URL || 'https://evren-llmapi.ssyz.org.tr/v1';
+        const res = await fetch(`${baseUrl}/chat/completions`, {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${evrenKey}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            model: process.env.EVREN_MODEL || 'auto',
+            messages: [
+              {
+                role: 'system',
+                content:
+                  'Sen MEB müfredatı uzmanısın. Yalnızca geçerli bir JSON dizisi üret. Format: [{"front": "Kavram/Soru", "back": "Açıklama"}]',
+              },
+              {
+                role: 'user',
+                content: `"${topic}" konusu hakkında ${count} adet eğitici flashcard (ön yüz soru - arka yüz cevap) hazırla.`,
+              },
+            ],
+            max_tokens: 1500,
+            temperature: 0.7,
+          }),
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          const content = data?.choices?.[0]?.message?.content || '';
+          const match = content.match(/\[[\s\S]*\]/);
+          if (match) {
+            const parsed = JSON.parse(match[0]);
+            if (Array.isArray(parsed) && parsed.length > 0) return parsed.slice(0, count);
+          }
+        }
+      } catch (err: any) {
+        console.warn('[AIService] EVREN LLM flashcard hatası:', err.message);
+      }
+    }
+
     return [
       { front: `${topic} - Temel Tanımı Nedir?`, back: `${topic}, alanındaki temel yapı ve kuralları ifade eden ana kavramdır.` },
       { front: `${topic} - En Önemli 3 Özelliği`, back: '1. Sistematik yapı, 2. Ölçülebilirlik, 3. Uygulamalı işlevsellik.' },
@@ -117,9 +184,121 @@ export class AIService {
   static async generateStory(topic: string): Promise<{ title: string; content: string; type: string }[]> {
     return [
       { type: 'TEXT', title: `${topic} Nedir?`, content: `${topic} hakkında bilmeniz gereken en can alıcı noktaları bu 1 dakikalık hikâyede özetliyoruz.` },
-      { type: 'TEXT', title: 'Önemli Unsurlar', content: `${topic} konusunun temellerini kavradığınızda soruların %90\'ını rahatlıkla çözebilirsiniz.` },
+      { type: 'TEXT', title: 'Önemli Unsurlar', content: `${topic} konusunun temellerini kavradığınızda soruların %90'ını rahatlıkla çözebilirsiniz.` },
       { type: 'QUIZ', title: 'Hızlı Test', content: `${topic} ile ilgili en belirleyici faktör nedir?` },
     ];
+  }
+
+  /**
+   * EVREN LLM API Entegrasyonu (Cumhurbaşkanlığı Savunma Sanayii Başkanlığı - SSYZ)
+   */
+  private static async callEvrenAPI(params: GenerateQuizRequest, apiKey: string): Promise<GeneratedQuizResponse> {
+    const baseUrl = process.env.EVREN_API_BASE_URL || 'https://evren-llmapi.ssyz.org.tr/v1';
+    const model = process.env.EVREN_MODEL || 'auto';
+    const count = params.questionCount || 5;
+    const grade = params.gradeLevel || 10;
+    const topic = params.topic || 'Genel Konu';
+    const subject = params.subject || 'Genel Ders';
+    const difficulty = params.difficulty || 'MEDIUM';
+
+    const systemPrompt =
+      'Sen Milli Eğitim Bakanlığı (MEB) müfredatı ve ÖSYM sınav standartlarına tam hakim uzman bir soru yazarısın. Senden istenen konu ve seviyeye uygun pedagojik kalitede sorular üretip SADECE geçerli bir JSON nesnesi döndürmelisin. Markdown formatında kod bloğu (```json veya ```) kullanma, doğrudan saf JSON üret.';
+
+    const userPrompt = `${grade}. Sınıf ${subject} dersi "${topic}" konusu hakkında tam ${count} soruluk çoktan seçmeli bir test ve bilgi yarışması hazırla.
+Kaynak Metin / Ek Notlar: ${params.sourceText || 'Standart MEB müfredat kazanımları'}
+Zorluk Seviyesi: ${difficulty}
+
+Döndüreceğin JSON formatı tam olarak şu şemaya uymalıdır:
+{
+  "title": "${grade}. Sınıf ${subject}: ${topic}",
+  "description": "${topic} konusu için pedagojik değerlendirme testi",
+  "subject": "${subject}",
+  "gradeLevel": ${grade},
+  "difficulty": "${difficulty}",
+  "questions": [
+    {
+      "title": "Soru metni?",
+      "type": "MULTIPLE_CHOICE",
+      "explanation": "Cevabın detaylı açıklaması",
+      "timeLimit": 20,
+      "points": 1000,
+      "difficulty": "${difficulty}",
+      "options": [
+        { "text": "Doğru Seçenek", "isCorrect": true },
+        { "text": "Yanlış Seçenek 1", "isCorrect": false },
+        { "text": "Yanlış Seçenek 2", "isCorrect": false },
+        { "text": "Yanlış Seçenek 3", "isCorrect": false }
+      ]
+    }
+  ]
+}`;
+
+    const res = await fetch(`${baseUrl}/chat/completions`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model,
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userPrompt },
+        ],
+        max_tokens: 3500,
+        temperature: 0.7,
+      }),
+    });
+
+    if (!res.ok) {
+      if (res.status === 403) {
+        // Otomatik kullanım şartı onayı
+        try {
+          await fetch(`${baseUrl}/terms/accept`, {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ version: 1 }),
+          });
+        } catch (_) {}
+      }
+      throw new Error(`EVREN LLM API Error (${res.status}): ${res.statusText}`);
+    }
+
+    const data = await res.json();
+    const content = data?.choices?.[0]?.message?.content || '';
+    const match = content.match(/\{[\s\S]*\}/);
+    if (!match) {
+      throw new Error('EVREN LLM yanıtında JSON nesnesi bulunamadı');
+    }
+
+    const parsed = JSON.parse(match[0]);
+    if (!parsed.questions || !Array.isArray(parsed.questions)) {
+      throw new Error('EVREN LLM geçerli soru listesi döndürmedi');
+    }
+
+    // Seçenek renklerini ve formatını standartlaştır
+    parsed.questions = parsed.questions.map((q: any) => ({
+      title: q.title || 'Soru Metni',
+      type: q.type || 'MULTIPLE_CHOICE',
+      explanation: q.explanation || 'Pedagojik açıklama mevcut.',
+      timeLimit: q.timeLimit || 20,
+      points: q.points || 1000,
+      difficulty: q.difficulty || difficulty,
+      options: (q.options || []).map((opt: any, optIdx: number) => ({
+        text: opt.text || `Seçenek ${optIdx + 1}`,
+        isCorrect: Boolean(opt.isCorrect),
+        color: opt.color || this.colors[optIdx % this.colors.length],
+      })),
+    }));
+
+    return {
+      title: parsed.title || `${grade}. Sınıf ${subject}: ${topic}`,
+      description: parsed.description || `${topic} değerlendirme quizi`,
+      subject: parsed.subject || subject,
+      gradeLevel: parsed.gradeLevel || grade,
+      difficulty: parsed.difficulty || difficulty,
+      questions: parsed.questions,
+    };
   }
 
   private static async callGeminiAPI(params: GenerateQuizRequest, apiKey: string): Promise<GeneratedQuizResponse> {
